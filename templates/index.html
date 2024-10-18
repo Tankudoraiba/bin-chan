@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Share App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Link to external CSS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for easier AJAX calls -->
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
+        <h1>Text Share App</h1>
+        <form id="textForm">
+            <textarea name="text" placeholder="Enter your text..." required></textarea><br>
+            <input type="text" name="url_name" placeholder="Custom URL (optional)">
+            <button type="submit">Share Text</button>
+        </form>
+        <div id="errorPopup" class="popup" style="display:none;">
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#textForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        window.location.href = response.url; // Redirect to the new URL
+                    },
+                    error: function(xhr) {
+                        // Handle error response
+                        if (xhr.status === 400) {
+                            $('#errorMessage').text(xhr.responseJSON.error); // Set the error message
+                            $('#errorPopup').show(); // Show the popup
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

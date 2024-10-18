@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.logo {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: calc(100% - 20px);
+    max-width: -webkit-fill-available;
+    min-width: -webkit-fill-available;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Styling the container */
+.container {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 600px;
+}
+
+
+/* Styling the text-box */
+.text-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    text-align: left;
+    position: relative;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 18px;
+}
+
+/* Styling the copy button */
+.copy-button {
+    position: relative;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #0056b3;
+}
+
+.popup {
+    background-color: red; /* Background color for the error popup */
+    color: white;          /* Text color */
+    padding: 10px;        /* Padding around the text */
+    margin-top: 10px;     /* Margin at the top */
+    border-radius: 5px;   /* Rounded corners */
+    position: fixed;       /* Position fixed so it stays in place */
+    top: 20px;            /* Distance from the top */
+    left: 50%;            /* Center the popup */
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 1000;        /* Ensure it's on top of other elements */
+    display: none;        /* Hidden by default */
+    width: 80%;           /* Set a width */
+    max-width: 400px;     /* Max width for larger screens */
+    text-align: center;    /* Center the text */
+}
