@@ -121,6 +121,9 @@ def index():
         if url_name and not re.match("^[a-zA-Z0-9_-]*$", url_name):
             return jsonify({"error": "Invalid URL name!"}), 400
 
+        if url_name and len(url_name) > 40:
+            return jsonify({"error": "URL name must be 40 characters or less!"}), 400
+
         # Rate limiting check
         ip = request.remote_addr
         if is_rate_limited(ip):
