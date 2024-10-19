@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime, timedelta
 import re
 from collections import defaultdict
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
@@ -48,6 +49,11 @@ def delete_expired_texts():
     with sqlite3.connect(DATABASE) as conn:
         conn.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(),))
         conn.commit()
+
+# Initialize and start the scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
+scheduler.start()
 
 # Simple rate limiting based on IP address
 def is_rate_limited(ip):
@@ -104,7 +110,7 @@ def index():
         elif expiry_option == '7d':
             expiry_time = datetime.now() + timedelta(days=7)
         else:
-            expiry_time = datetime.now() + timedelta(minutes=10)  # Default to 1 hour
+            expiry_time = datetime.now() + timedelta(minutes=10)  # Default
 
         store_text(url_name, text, expiry_time)
 
