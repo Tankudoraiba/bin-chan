@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Share App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Link to external CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for easier AJAX calls -->
 </head>
+
 <body>
     <div class="container">
         <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
@@ -22,18 +29,18 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#textForm').on('submit', function(event) {
+        $(document).ready(function () {
+            $('#textForm').on('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
 
                 $.ajax({
                     type: 'POST',
                     url: '/',
                     data: $(this).serialize(),
-                    success: function(response) {
+                    success: function (response) {
                         window.location.href = response.url; // Redirect to the new URL
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         // Handle error response
                         if (xhr.status === 400) {
                             $('#errorMessage').text(xhr.responseJSON.error); // Set the error message
@@ -45,4 +52,5 @@
         });
     </script>
 </body>
+
 </html>

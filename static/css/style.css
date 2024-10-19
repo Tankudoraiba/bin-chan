@@ -1,49 +1,96 @@
+/* Styling the body */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    background-color: #1f1f1f;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    /* Ensure the container is centered vertically */
+    overflow: hidden;
+    /* Prevent body overflow */
 }
 
+/* Ensure the container doesn't stretch above visible space */
 .container {
     text-align: center;
-    background-color: white;
+    background-color: #4d4d4d;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+
+    /* New rules */
+    max-height: 80vh;
+    /* Prevent overflowing the viewport */
+    overflow: hidden;
+    /* Hide overflow to make internal scrolling work */
+    width: 100%;
+    max-width: 1000px;
+    /* Set a max width for readability */
 }
 
+/* Add a wrapper around the form to allow internal scrolling */
+.form-wrapper {
+    max-height: calc(100% - 40px);
+    /* Subtract some padding for internal content */
+    overflow-y: auto;
+    /* Enable scrolling inside the form-wrapper */
+}
+
+/* Styling the logo */
 .logo {
     width: 100px;
     margin-bottom: 20px;
 }
 
+/* Styling the header */
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
+/* Adjust textarea to not grow too large */
 textarea {
     width: calc(100% - 20px);
-    max-width: -webkit-fill-available;
-    min-width: -webkit-fill-available;
+    background-color: #a6a6a6;
     height: 100px;
+    max-height: 30vh;
+    /* Limit the height of the textarea to prevent large growth */
     margin-bottom: 10px;
     padding: 10px;
     font-size: 16px;
+    resize: none;
+    /* Disable resizing */
+    border: none;
+    /* Remove the default border */
+    outline: none;
+    /* Remove the focus outline */
+    box-shadow: none;
+    /* Remove any box shadow */
 }
 
+/* Adjust the text input field */
 input[type="text"] {
     width: calc(100% - 20px);
+    background-color: #a6a6a6;
     padding: 10px;
     margin-bottom: 10px;
     font-size: 16px;
+    max-height: 40px;
+    /* Limit the height */
+    border: none;
+    /* Remove the default border */
+    outline: none;
+    /* Remove the focus outline */
+    box-shadow: none;
+    /* Remove any box shadow */
 }
 
+/* Styling the submit button */
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -57,25 +104,60 @@ button:hover {
     background-color: #218838;
 }
 
-/* Styling the container */
-.container {
+/* Styling the error popup */
+.popup {
+    background-color: red;
+    /* Background color for the error popup */
+    color: white;
+    /* Text color */
+    padding: 10px;
+    /* Padding around the text */
+    margin-top: 10px;
+    /* Margin at the top */
+    border-radius: 5px;
+    /* Rounded corners */
+    position: fixed;
+    /* Position fixed so it stays in place */
+    top: 20px;
+    /* Distance from the top */
+    left: 50%;
+    /* Center the popup */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    z-index: 1000;
+    /* Ensure it's on top of other elements */
+    display: none;
+    /* Hidden by default */
+    width: 80%;
+    /* Set a width */
+    max-width: 400px;
+    /* Max width for larger screens */
     text-align: center;
-    margin: 50px auto;
-    max-width: 600px;
+    /* Center the text */
+    border: none;
+    /* Remove the default border */
+    outline: none;
+    /* Remove the focus outline */
+    box-shadow: none;
+    /* Remove any box shadow */
 }
-
 
 /* Styling the text-box */
 .text-box {
-    border: 1px solid #ddd;
     padding: 20px;
     margin-bottom: 10px;
-    background-color: #f9f9f9;
+    background-color: #a6a6a6;
     text-align: left;
     position: relative;
     white-space: pre-wrap;
     word-wrap: break-word;
     font-size: 18px;
+    border: none;
+    /* Remove the default border */
+    outline: none;
+    /* Remove the focus outline */
+    box-shadow: none;
+    /* Remove any box shadow */
 }
 
 /* Styling the copy button */
@@ -91,23 +173,22 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
+.return-button {
+    position: relative;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
 .copy-button:hover {
     background-color: #0056b3;
 }
 
-.popup {
-    background-color: red; /* Background color for the error popup */
-    color: white;          /* Text color */
-    padding: 10px;        /* Padding around the text */
-    margin-top: 10px;     /* Margin at the top */
-    border-radius: 5px;   /* Rounded corners */
-    position: fixed;       /* Position fixed so it stays in place */
-    top: 20px;            /* Distance from the top */
-    left: 50%;            /* Center the popup */
-    transform: translateX(-50%); /* Center horizontally */
-    z-index: 1000;        /* Ensure it's on top of other elements */
-    display: none;        /* Hidden by default */
-    width: 80%;           /* Set a width */
-    max-width: 400px;     /* Max width for larger screens */
-    text-align: center;    /* Center the text */
+.return-button:hover {
+    background-color: #0056b3;
 }

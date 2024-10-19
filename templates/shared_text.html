@@ -14,6 +14,7 @@
         <h1>Shared Text</h1>
         <div class="text-box" id="text-to-copy">{{ text }}</div>
         <button class="copy-button" onclick="copyText()">Copy</button>
+        <button class="return-button" onclick="Return()">Return</button>
     </div>
 
     <script>
@@ -32,6 +33,10 @@
 
             // Remove the temporary textarea
             document.body.removeChild(tempTextArea);
+        }
+        function Return() {
+            // Navigate back to the previous page in the browser's history
+            window.history.back();
         }
     </script>
 </body>
