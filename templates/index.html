@@ -19,8 +19,17 @@
         <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
         <form id="textForm">
             <textarea name="text" placeholder="Enter your text..." required></textarea><br>
+            <div id="charCount">0/1000</div> <!-- Character count display -->
             <input type="text" name="url_name" placeholder="Custom URL (optional)">
-            <button type="submit">Share Text</button>
+            <div class="buttons">
+                <select name="expiry_option" required class="styled-dropdown">
+                    <option value="1h">1 Hour</option>
+                    <option value="3h">3 Hours</option>
+                    <option value="24h">24 Hours</option>
+                    <option value="7d">7 Days</option>
+                </select>
+                <button type="submit">Share Text</button>
+            </div>
         </form>
         <div id="errorPopup" class="popup" style="display:none;">
             <span id="errorMessage"></span>
@@ -45,6 +54,12 @@
                         $('#errorPopup').show(); // Show the popup
                     }
                 });
+            });
+
+            // Character counting functionality
+            $('textarea[name="text"]').on('input', function () {
+                let charCount = $(this).val().length;
+                $('#charCount').text(charCount + '/1000');
             });
         });
     </script>

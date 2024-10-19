@@ -71,6 +71,7 @@ def index():
     if request.method == 'POST':
         text = request.form['text']
         url_name = request.form.get('url_name', '').strip()
+        expiry_option = request.form.get('expiry_option')  # Get the expiry option
 
         # Validate text and URL name
         if not text or len(text) > 1000:
@@ -91,7 +92,18 @@ def index():
         if fetch_text(url_name):
             return jsonify({"error": "URL name already taken!"}), 400
 
-        expiry_time = datetime.now() + timedelta(hours=1)
+        # Determine expiry time based on user selection
+        if expiry_option == '1h':
+            expiry_time = datetime.now() + timedelta(hours=1)
+        elif expiry_option == '3h':
+            expiry_time = datetime.now() + timedelta(hours=3)
+        elif expiry_option == '24h':
+            expiry_time = datetime.now() + timedelta(days=1)
+        elif expiry_option == '7d':
+            expiry_time = datetime.now() + timedelta(days=7)
+        else:
+            expiry_time = datetime.now() + timedelta(hours=1)  # Default to 1 hour
+
         store_text(url_name, text, expiry_time)
 
         return jsonify({"url": url_for('show_text', url_name=url_name)}), 200

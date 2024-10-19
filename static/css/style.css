@@ -22,7 +22,7 @@ body {
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-
+    margin: 3vh;
     /* New rules */
     max-height: 80vh;
     /* Prevent overflowing the viewport */
@@ -100,16 +100,71 @@ button {
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 35px;
+    height: 100%;
     font-size: 16px;
 }
 
 button:hover {
     background-color: #960000;
+}
+
+/* Styling for the dropdown to look like a button */
+.styled-dropdown {
+    appearance: none;
+    /* Remove default styling */
+    -webkit-appearance: none;
+    /* For Safari */
+    -moz-appearance: none;
+    /* For Firefox */
+    background-color: #b80000;
+    /* Same background as the button */
+    color: white;
+    /* White text color */
+    padding: 10px;
+    /* Padding for spacing */
+    margin-bottom: 10px;
+    /* Space below */
+    border: none;
+    /* Remove default border */
+    border-radius: 25px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Change cursor to pointer */
+    font-size: 16px;
+    font-weight: bold;
+    /* Font size */
+    transition: background-color 0.3s ease;
+    height: 100%;
+    /* Limit height */
+    width: 120px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.styled-dropdown::hover {
+    background-color: #960000;
+}
+
+/* Optional: Add a background image for the dropdown arrow */
+.styled-dropdown::after {
+    content: '▼';
+    /* Dropdown arrow */
+    position: absolute;
+    /* Position it absolutely */
+    right: 10px;
+    /* Position from the right */
+    top: calc(50% - 10px);
+    /* Center vertically */
+    pointer-events: none;
+    /* Ignore pointer events on the arrow */
+}
+
+.buttons {
+    height: 37.5px;
 }
 
 /* Styling the error popup */
@@ -178,11 +233,10 @@ button:hover {
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 35px;
+    height: 100%;
     font-size: 16px;
 }
 
@@ -195,11 +249,10 @@ button:hover {
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 35px;
+    height: 100%;
     font-size: 16px;
 }
 
@@ -211,3 +264,9 @@ button:hover {
     background-color: #960000;
 }
 
+#charCount {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #ffffff;
+    text-align: left;
+}
