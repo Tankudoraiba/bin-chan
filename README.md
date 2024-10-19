@@ -1,3 +1,5 @@
+![bin-chan](https://github.com/PolishTanker/bin/blob/main/static/images/logo.svg?raw=true)
+
 # Bin-chan: A Temporary Text Sharing Web Application
 
 ## Overview
