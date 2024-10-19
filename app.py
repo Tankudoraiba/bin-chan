@@ -93,7 +93,9 @@ def index():
             return jsonify({"error": "URL name already taken!"}), 400
 
         # Determine expiry time based on user selection
-        if expiry_option == '1h':
+        if expiry_option == '10m':
+            expiry_time = datetime.now() + timedelta(minutes=10)
+        elif expiry_option == '1h':
             expiry_time = datetime.now() + timedelta(hours=1)
         elif expiry_option == '3h':
             expiry_time = datetime.now() + timedelta(hours=3)
@@ -102,7 +104,7 @@ def index():
         elif expiry_option == '7d':
             expiry_time = datetime.now() + timedelta(days=7)
         else:
-            expiry_time = datetime.now() + timedelta(hours=1)  # Default to 1 hour
+            expiry_time = datetime.now() + timedelta(minutes=10)  # Default to 1 hour
 
         store_text(url_name, text, expiry_time)
 
