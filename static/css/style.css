@@ -10,7 +10,6 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
 }
 
 /* Container styles */
@@ -22,7 +21,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 3vh;
-    max-height: 80vh;
     overflow: hidden;
     width: 100%;
     max-width: 1000px;
@@ -169,7 +167,7 @@ button:hover {
     position: relative;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-size: 18px;
+    font-size: 16px;
     overflow-y: auto;
     max-height: 50vh;
 }
