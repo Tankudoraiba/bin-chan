@@ -2,10 +2,14 @@ from flask import Flask, request, redirect, render_template, url_for, abort, jso
 import sqlite3
 import uuid
 from datetime import datetime, timedelta
+import re
+from collections import defaultdict
 
 app = Flask(__name__)
 
 DATABASE = 'db.sqlite3'
+RATE_LIMIT = 5  # Limit to 5 requests per minute per IP
+request_counts = defaultdict(list)
 
 # Initialize the database with a table for storing text entries
 def init_db():
@@ -31,7 +35,6 @@ def fetch_text(url_name):
         cur = conn.execute('SELECT content, expiry FROM texts WHERE id = ?', (url_name,))
         row = cur.fetchone()
         if row:
-            # Parse the expiry time including microseconds
             expiry_time = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S.%f')
             if datetime.now() < expiry_time:
                 return row[0]
@@ -46,24 +49,51 @@ def delete_expired_texts():
         conn.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(),))
         conn.commit()
 
+# Simple rate limiting based on IP address
+def is_rate_limited(ip):
+    now = datetime.now()
+    timestamps = request_counts[ip]
+    
+    # Remove timestamps older than 1 minute
+    while timestamps and timestamps[0] < now - timedelta(minutes=1):
+        timestamps.pop(0)
+    
+    # Check if the request count exceeds the limit
+    if len(timestamps) >= RATE_LIMIT:
+        return True
+    
+    # Add current timestamp for the new request
+    timestamps.append(now)
+    return False
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         text = request.form['text']
-        url_name = request.form.get('url_name', '').strip()  # Use provided URL name or generate if empty
+        url_name = request.form.get('url_name', '').strip()
 
-        # If no custom URL is provided, generate a unique one
+        # Validate text and URL name
+        if not text or len(text) > 1000:
+            return jsonify({"error": "Invalid text!"}), 400
+
+        if url_name and not re.match("^[a-zA-Z0-9_-]*$", url_name):
+            return jsonify({"error": "Invalid URL name!"}), 400
+
+        # Rate limiting check
+        ip = request.remote_addr
+        if is_rate_limited(ip):
+            return jsonify({"error": "Too many requests. Please try again later."}), 429
+
+        # Generate unique URL if not provided
         if not url_name:
             url_name = str(uuid.uuid4())[:8]
 
-        # Check if the URL already exists
         if fetch_text(url_name):
             return jsonify({"error": "URL name already taken!"}), 400
 
-        expiry_time = datetime.now() + timedelta(hours=1)  # Set expiration time to 1 hour
+        expiry_time = datetime.now() + timedelta(hours=1)
         store_text(url_name, text, expiry_time)
 
-        # Redirect to the shared text page
         return jsonify({"url": url_for('show_text', url_name=url_name)}), 200
     
     return render_template('index.html')
@@ -79,6 +109,5 @@ def show_text(url_name):
         abort(404)
 
 if __name__ == '__main__':
-    init_db()  # Initialize the database when the app starts
+    init_db()
     app.run(debug=True)
-

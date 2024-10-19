@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shared Text</title>
+    <title>Bin-chan | Throw bin</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
     <div class="container">
         <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
-        <h1>Shared Text</h1>
         <div class="text-box" id="text-to-copy">{{ text }}</div>
         <button class="copy-button" onclick="copyText()">Copy</button>
         <button class="return-button" onclick="Return()">Return</button>

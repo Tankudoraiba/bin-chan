@@ -44,7 +44,7 @@ body {
 /* Styling the logo */
 .logo {
     width: 100px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 /* Styling the header */
@@ -92,16 +92,24 @@ input[type="text"] {
 
 /* Styling the submit button */
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: white;
+    position: relative;
     border: none;
+    border-radius: 25px;
+    background-color: #b80000;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 120px;
+    height: 35px;
+    font-size: 16px;
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #960000;
 }
 
 /* Styling the error popup */
@@ -163,32 +171,43 @@ button:hover {
 /* Styling the copy button */
 .copy-button {
     position: relative;
-    background-color: #007BFF;
-    color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 25px;
+    background-color: #b80000;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
-    font-size: 14px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
     transition: background-color 0.3s ease;
+    width: 120px;
+    height: 35px;
+    font-size: 16px;
 }
 
 .return-button {
     position: relative;
-    background-color: #007BFF;
-    color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 25px;
+    background-color: #b80000;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
-    font-size: 14px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
     transition: background-color 0.3s ease;
+    width: 120px;
+    height: 35px;
+    font-size: 16px;
 }
 
 .copy-button:hover {
-    background-color: #0056b3;
+    background-color: #960000;
 }
 
 .return-button:hover {
-    background-color: #0056b3;
+    background-color: #960000;
 }
+
