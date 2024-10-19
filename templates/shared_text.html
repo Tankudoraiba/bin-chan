@@ -17,7 +17,7 @@
 <body>
     <div class="container">
         <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
-        <div class="text-box" id="text-to-copy">{{ text }}</div>
+        <div class="text-box" id="text-to-copy">{{ text | e}}</div>
         <div class="buttons">
             <button class="copy-link-button" onclick="copyLink()">Link</button>
             <button class="copy-button" onclick="copyText()">Copy</button>
