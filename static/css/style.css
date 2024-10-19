@@ -10,263 +10,207 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    /* Ensure the container is centered vertically */
     overflow: hidden;
-    /* Prevent body overflow */
 }
 
-/* Ensure the container doesn't stretch above visible space */
+/* Container styles */
 .container {
     text-align: center;
     background-color: #4d4d4d;
     padding: 20px;
+    color: mintcream;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 3vh;
-    /* New rules */
     max-height: 80vh;
-    /* Prevent overflowing the viewport */
     overflow: hidden;
-    /* Hide overflow to make internal scrolling work */
     width: 100%;
     max-width: 1000px;
-    /* Set a max width for readability */
 }
 
-/* Add a wrapper around the form to allow internal scrolling */
+/* Form wrapper styles */
 .form-wrapper {
     max-height: calc(100% - 40px);
-    /* Subtract some padding for internal content */
     overflow-y: auto;
-    /* Enable scrolling inside the form-wrapper */
 }
 
-/* Styling the logo */
+/* Logo styling */
 .logo {
-    width: 100px;
+    max-width: 400px;
+    width: 100%;
+    min-width: 250px;
+    height: auto;
     margin-bottom: 10px;
 }
 
-/* Styling the header */
+/* Header styling */
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-/* Adjust textarea to not grow too large */
+/* Textarea styling */
 textarea {
     width: calc(100% - 20px);
     background-color: #a6a6a6;
+    color: #121212;
     height: 100px;
     max-height: 30vh;
-    /* Limit the height of the textarea to prevent large growth */
     margin-bottom: 10px;
     padding: 10px;
     font-size: 16px;
     resize: none;
-    /* Disable resizing */
     border: none;
-    /* Remove the default border */
     outline: none;
-    /* Remove the focus outline */
-    box-shadow: none;
-    /* Remove any box shadow */
 }
 
-/* Adjust the text input field */
+/* Text input styling */
 input[type="text"] {
     width: calc(100% - 20px);
     background-color: #a6a6a6;
+    color: #121212;
     padding: 10px;
     margin-bottom: 10px;
     font-size: 16px;
     max-height: 40px;
-    /* Limit the height */
     border: none;
-    /* Remove the default border */
     outline: none;
-    /* Remove the focus outline */
-    box-shadow: none;
-    /* Remove any box shadow */
 }
 
-/* Styling the submit button */
+/* Centered buttons container */
+.buttons {
+    display: flex;
+    justify-content: center; /* Center elements horizontally */
+    align-items: center; /* Center elements vertically */
+    gap: 10px; /* Optional spacing between elements */
+}
+
+/* Submit button styling */
 button {
     position: relative;
     border: none;
-    border-radius: 25px;
+    border-radius: 10px;
     background-color: #b80000;
     color: #ffffff;
     text-align: center;
-    text-decoration: none;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 100%;
+    height: 40px; /* Set fixed height */
     font-size: 16px;
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
 }
 
 button:hover {
     background-color: #960000;
 }
 
-/* Styling for the dropdown to look like a button */
+/* Styled dropdown */
 .styled-dropdown {
     appearance: none;
-    /* Remove default styling */
     -webkit-appearance: none;
-    /* For Safari */
     -moz-appearance: none;
-    /* For Firefox */
     background-color: #b80000;
-    /* Same background as the button */
     color: white;
-    /* White text color */
-    padding: 10px;
-    /* Padding for spacing */
-    margin-bottom: 10px;
-    /* Space below */
+    padding: 10px; /* Adjust padding for consistency */
+    margin: 0; /* Reset margin */
     border: none;
-    /* Remove default border */
-    border-radius: 25px;
-    /* Rounded corners */
+    border-radius: 10px;
     cursor: pointer;
-    /* Change cursor to pointer */
     font-size: 16px;
     font-weight: bold;
-    /* Font size */
     transition: background-color 0.3s ease;
-    height: 100%;
-    /* Limit height */
-    width: 120px;
-    border: none;
+    height: 40px; /* Set fixed height */
+    width: 120px; /* Match width with button */
     outline: none;
-    box-shadow: none;
 }
 
-.styled-dropdown::hover {
+.styled-dropdown:hover {
     background-color: #960000;
 }
 
-/* Optional: Add a background image for the dropdown arrow */
+/* Dropdown arrow */
 .styled-dropdown::after {
     content: '▼';
-    /* Dropdown arrow */
     position: absolute;
-    /* Position it absolutely */
     right: 10px;
-    /* Position from the right */
     top: calc(50% - 10px);
-    /* Center vertically */
     pointer-events: none;
-    /* Ignore pointer events on the arrow */
 }
 
-.buttons {
-    height: 37.5px;
-}
-
-/* Styling the error popup */
+/* Error popup styling */
 .popup {
     background-color: red;
-    /* Background color for the error popup */
     color: white;
-    /* Text color */
     padding: 10px;
-    /* Padding around the text */
     margin-top: 10px;
-    /* Margin at the top */
     border-radius: 5px;
-    /* Rounded corners */
     position: fixed;
-    /* Position fixed so it stays in place */
     top: 20px;
-    /* Distance from the top */
     left: 50%;
-    /* Center the popup */
     transform: translateX(-50%);
-    /* Center horizontally */
     z-index: 1000;
-    /* Ensure it's on top of other elements */
     display: none;
-    /* Hidden by default */
     width: 80%;
-    /* Set a width */
     max-width: 400px;
-    /* Max width for larger screens */
     text-align: center;
-    /* Center the text */
-    border: none;
-    /* Remove the default border */
-    outline: none;
-    /* Remove the focus outline */
-    box-shadow: none;
-    /* Remove any box shadow */
 }
 
-/* Styling the text-box */
+/* Text box styling */
 .text-box {
     padding: 20px;
     margin-bottom: 10px;
     background-color: #a6a6a6;
+    color: #121212;
     text-align: left;
     position: relative;
     white-space: pre-wrap;
     word-wrap: break-word;
     font-size: 18px;
-    border: none;
-    /* Remove the default border */
-    outline: none;
-    /* Remove the focus outline */
-    box-shadow: none;
-    /* Remove any box shadow */
+    overflow-y: auto;
+    max-height: 50vh;
 }
 
-/* Styling the copy button */
-.copy-button {
-    position: relative;
-    border: none;
-    border-radius: 25px;
-    background-color: #b80000;
-    color: #ffffff;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    width: 120px;
-    height: 100%;
-    font-size: 16px;
-}
-
+/* Copy and return button styles */
+.copy-button,
+.copy-link-button,
 .return-button {
     position: relative;
     border: none;
-    border-radius: 25px;
+    border-radius: 10px;
     background-color: #b80000;
     color: #ffffff;
     text-align: center;
-    text-decoration: none;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 100%;
+    height: 40px; /* Set fixed height */
     font-size: 16px;
 }
 
-.copy-button:hover {
-    background-color: #960000;
-}
-
+.copy-button:hover,
+.copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
 }
 
+.green-bg {
+    background-color: green;
+}
+
+/* Character count styling */
 #charCount {
     font-size: 14px;
     margin-bottom: 10px;
-    color: #ffffff;
-    text-align: left;
+    margin-right: 10px;
+    color: mintcream;
+    text-align: right;
+}
+
+/* Box-sizing adjustment */
+*, *::before, *::after {
+    box-sizing: border-box; /* Include padding/border in width/height */
 }

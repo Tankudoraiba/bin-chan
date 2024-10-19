@@ -11,6 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -19,7 +20,7 @@
         <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
         <form id="textForm">
             <textarea name="text" placeholder="Enter your text..." required></textarea><br>
-            <div id="charCount">0/1000</div> <!-- Character count display -->
+            <div id="charCount">0/6000</div> <!-- Character count display -->
             <input type="text" name="url_name" placeholder="Custom URL (optional)">
             <div class="buttons">
                 <select name="expiry_option" required class="styled-dropdown">
@@ -59,7 +60,7 @@
             // Character counting functionality
             $('textarea[name="text"]').on('input', function () {
                 let charCount = $(this).val().length;
-                $('#charCount').text(charCount + '/1000');
+                $('#charCount').text(charCount + '/6000');
             });
         });
     </script>

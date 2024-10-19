@@ -74,7 +74,7 @@ def index():
         expiry_option = request.form.get('expiry_option')  # Get the expiry option
 
         # Validate text and URL name
-        if not text or len(text) > 1000:
+        if not text or len(text) > 6000:
             return jsonify({"error": "Invalid text!"}), 400
 
         if url_name and not re.match("^[a-zA-Z0-9_-]*$", url_name):
@@ -118,7 +118,18 @@ def show_text(url_name):
     if text:
         return render_template('shared_text.html', text=text)
     else:
-        abort(404)
+        return render_template('404.html'), 404
+
+@app.route('/text/<url_name>', methods=['GET'])
+def get_text(url_name):
+    delete_expired_texts()  # Clean up expired texts
+    text = fetch_text(url_name)
+
+    if text:
+        return text, 200, {'Content-Type': 'text/plain'}
+    else:
+        return "Text not found or expired", 404
+
 
 if __name__ == '__main__':
     init_db()
