@@ -45,9 +45,11 @@
             // Change button color
             const copyButton = document.querySelector('.copy-button');
             copyButton.classList.add('green-bg');
+            copyButton.classList.add('no-hover');
             setTimeout(() => {
                 copyButton.classList.remove('green-bg');
-            }, 1500);
+                copyButton.classList.remove('no-hover');
+            }, 500);
         }
 
         function Return() {
@@ -61,15 +63,20 @@
                 .then(() => {
                     // Change button color
                     const linkButton = document.querySelector('.copy-link-button');
-                    linkButton.classList.add('green-bg');
+                    linkButton.classList.add('green-bg'); // Add the new background class
+
+                    // Temporarily disable the hover effect
+                    linkButton.classList.add('no-hover');
                     setTimeout(() => {
-                        linkButton.classList.remove('green-bg');
-                    }, 1500);
+                        linkButton.classList.remove('green-bg'); // Remove the background class
+                        linkButton.classList.remove('no-hover'); // Re-enable the hover effect
+                    }, 500);
                 })
                 .catch(err => {
                     console.error("Could not copy text: ", err);
                 });
         }
+
     </script>
 </body>
 

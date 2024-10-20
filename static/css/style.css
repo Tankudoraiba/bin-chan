@@ -199,7 +199,9 @@ button:hover {
 .green-bg {
     background-color: green;
 }
-
+.no-hover:hover {
+    background-color: green; /* Disable hover effect when .no-hover is applied */
+}
 /* Character count styling */
 #charCount {
     font-size: 14px;
