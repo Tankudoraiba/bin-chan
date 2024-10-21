@@ -6,6 +6,9 @@ import re
 from collections import defaultdict
 from apscheduler.schedulers.background import BackgroundScheduler
 import logging
+from cryptography.fernet import Fernet
+import base64
+import hashlib
 
 app = Flask(__name__)
 
@@ -45,29 +48,62 @@ def init_db():
         CREATE TABLE IF NOT EXISTS texts (
             id TEXT PRIMARY KEY,
             content TEXT NOT NULL,
-            expiry TIMESTAMP
+            expiry TIMESTAMP,
+            is_encrypted INTEGER DEFAULT 0
         );
     ''')
     db.commit()
 
 # Insert text into the database with an expiry time
-def store_text(url_name, text, expiry_time):
+def store_text(url_name, text, expiry_time, is_encrypted=False):
     """ Store text in the database. """
     db = get_db()
-    db.execute('INSERT INTO texts (id, content, expiry) VALUES (?, ?, ?)', (url_name, text, expiry_time))
+    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)', (url_name, text, expiry_time, int(is_encrypted)))
     db.commit()
 
-# Fetch text by id (url_name)
-def fetch_text(url_name):
+# Fetch text by id (url_name), handle optional decryption
+def fetch_text(url_name, password=None):
     """ Fetch text from the database by its URL name. """
     db = get_db()
-    cur = db.execute('SELECT content, expiry FROM texts WHERE id = ?', (url_name,))
+    cur = db.execute('SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,))
     row = cur.fetchone()
     if row:
         expiry_time = datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f')
         if datetime.now() < expiry_time:  # Use UTC for consistency
-            return row['content']
+            content = row['content']
+            is_encrypted = row['is_encrypted']
+
+            if is_encrypted:
+                if not password:
+                    return {"error": "Password required"}
+                try:
+                    return decrypt_text(content, password)
+                except Exception as e:
+                    return {"error": "Invalid password"}
+
+            return content
     return None
+
+# Encrypt the text using the password
+def encrypt_text(text, password):
+    """ Encrypt text using a password. """
+    key = derive_key_from_password(password)
+    fernet = Fernet(key)
+    return fernet.encrypt(text.encode()).decode()
+
+# Decrypt the text using the password
+def decrypt_text(encrypted_text, password):
+    """ Decrypt text using the password. """
+    key = derive_key_from_password(password)
+    fernet = Fernet(key)
+    return fernet.decrypt(encrypted_text.encode()).decode()
+
+# Derive a cryptographic key from a password
+def derive_key_from_password(password):
+    """ Derive a key from a password using SHA-256. """
+    password_bytes = password.encode('utf-8')
+    key = hashlib.sha256(password_bytes).digest()
+    return base64.urlsafe_b64encode(key)
 
 # Delete expired texts
 def delete_expired_texts():
@@ -82,7 +118,7 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
 scheduler.start()
 
-# Check if the user is rate limited
+# Check if the user is rate-limited
 def is_rate_limited(ip):
     """ Check if the user is rate-limited. """
     now = datetime.now()
@@ -113,6 +149,7 @@ def index():
         text = request.form['text']
         url_name = request.form.get('url_name', '').strip()
         expiry_option = request.form.get('expiry_option')  # Get the expiry option
+        password = request.form.get('password', '').strip()
 
         # Validate text and URL name
         if not text or len(text) > 6000:
@@ -146,32 +183,61 @@ def index():
         }
         expiry_time = datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
 
-        store_text(url_name, text, expiry_time)
+        # Encrypt text if password is provided
+        is_encrypted = False
+        if password:
+            text = encrypt_text(text, password)
+            is_encrypted = True
 
+        store_text(url_name, text, expiry_time, is_encrypted)
+
+        # Redirect to the shared text URL, skipping the password prompt
         return jsonify({"url": url_for('show_text', url_name=url_name)}), 200
-    
+
     return render_template('index.html')
 
-@app.route('/<url_name>')
+@app.route('/<url_name>', methods=['GET', 'POST'])
 def show_text(url_name):
-    """ Display the shared text. """
-    text = fetch_text(url_name)
+    """ Display the shared text or prompt for password if needed. """
+    password = None
     
+    if request.method == 'POST':
+        password = request.form.get('password')
+
+    # Fetch text, checking if a password is required
+    text = fetch_text(url_name, password)
+    
+    if isinstance(text, dict) and 'error' in text:
+        if text['error'] == "Password required":
+            # Only ask for password if the entry is encrypted and no password has been entered
+            return render_template('password_prompt.html', url_name=url_name, error=text['error'])
+        else:
+            return jsonify({"error": text['error']}), 400
+
     if text:
         return render_template('shared_text.html', text=text)
     else:
         return render_template('404.html'), 404
 
+
 @app.route('/text/<url_name>', methods=['GET'])
 def get_text(url_name):
-    """ Get text as plain text. """
-    text = fetch_text(url_name)
+    """ Get text as plain text, allowing password input. """
+    # Retrieve the password from query parameter or header
+    password = request.args.get('password') or request.headers.get('X-Text-Password')
+    
+    # Fetch and decrypt the text if needed
+    result = fetch_text(url_name, password)
 
-    if text:
-        return text, 200, {'Content-Type': 'text/plain'}
+    if isinstance(result, dict) and 'error' in result:
+        # If an error occurred (password required or invalid), return appropriate message
+        return result['error'], 403 if 'password' in result['error'].lower() else 404
+
+    if result:
+        return result, 200, {'Content-Type': 'text/plain'}
     else:
         return "Text not found or expired", 404
-    
+
 @app.errorhandler(Exception)
 def handle_exception(e):
     """ Handle exceptions and log them. """

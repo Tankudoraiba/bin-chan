@@ -22,6 +22,7 @@
             <textarea name="text" placeholder="Enter your text..." required></textarea><br>
             <div id="charCount">0/6000</div> <!-- Character count display -->
             <input type="text" name="url_name" placeholder="Custom URL (optional)">
+            <input type="password" name="password" placeholder="Password (optional)">
             <div class="buttons">
                 <select name="expiry_option" required class="styled-dropdown">
                     <option value="10m">10 Minutes</option>
@@ -48,8 +49,14 @@
                     url: '/',
                     data: $(this).serialize(),
                     success: function (response) {
-                        window.location.href = response.url; // Redirect to the new URL
+                        if (response.url) {
+                            // Directly redirect to the shared text if the user created it
+                            window.location.href = response.url; // Redirect to the new URL
+                        } else {
+                            // Handle other success cases if needed
+                        }
                     },
+
                     error: function (xhr) {
                         // Handle error response
                         $('#errorMessage').text(xhr.responseJSON.error); // Set the error message

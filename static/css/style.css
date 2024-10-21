@@ -63,7 +63,8 @@ textarea {
 }
 
 /* Text input styling */
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
     width: calc(100% - 20px);
     background-color: #a6a6a6;
     color: #121212;
@@ -140,7 +141,8 @@ button:hover {
 }
 
 /* Error popup styling */
-.popup {
+.popup,
+.error {
     background-color: red;
     color: white;
     padding: 10px;
