@@ -210,9 +210,9 @@ def show_text(url_name):
     if isinstance(text, dict) and 'error' in text:
         if text['error'] == "Password required":
             # Only ask for password if the entry is encrypted and no password has been entered
-            return render_template('password_prompt.html', url_name=url_name, error=text['error'])
+            return render_template('password_prompt.html', url_name=url_name)
         else:
-            return jsonify({"error": text['error']}), 400
+            return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
     if text:
         return render_template('shared_text.html', text=text)
