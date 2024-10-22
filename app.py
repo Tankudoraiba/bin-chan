@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Configurations
-app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')  # Set this environment variable in Vercel
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql+asyncpg://username:password@localhost/mydatabase')
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
