@@ -4,7 +4,7 @@ import uuid
 import base64
 import hashlib
 import logging
-import sqlite3
+import psycopg2
 from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import wraps
@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Configurations
-app.config['DATABASE'] = 'db.sqlite3'
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')  # Set this environment variable in Vercel
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
@@ -29,14 +29,14 @@ rate_limit_data = defaultdict(lambda: {"timestamps": [], "last_limit_hit": None}
 
 # Get a database connection
 def get_db():
-    try:
-        if 'db' not in g:
-            g.db = sqlite3.connect(app.config['DATABASE'])
-            g.db.row_factory = sqlite3.Row
-        return g.db
-    except sqlite3.Error as e:
-        logging.error(f"Database connection error: {e}")
-        abort(500)
+    if 'db' not in g:
+        try:
+            g.db = psycopg2.connect(app.config['DATABASE_URL'])
+            g.db.autocommit = True  # Use autocommit for PostgreSQL
+        except psycopg2.Error as e:
+            logging.error(f"Database connection error: {e}")
+            abort(500)
+    return g.db
 
 # Close the database connection after each request
 @app.teardown_appcontext
@@ -48,39 +48,45 @@ def close_db(exception=None):
 # Initialize the database schema
 def init_db():
     db = get_db()
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS texts (
-            id TEXT PRIMARY KEY,
-            content TEXT NOT NULL,
-            expiry TIMESTAMP,
-            is_encrypted INTEGER DEFAULT 0
-        );
-    ''')
+    with db.cursor() as cursor:
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS texts (
+                id VARCHAR(40) PRIMARY KEY,
+                content TEXT NOT NULL,
+                expiry TIMESTAMP,
+                is_encrypted BOOLEAN DEFAULT FALSE
+            );
+        ''')
     db.commit()
 
 # Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
     db = get_db()
-    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)', 
-               (url_name, text, expiry_time, int(is_encrypted)))
+    with db.cursor() as cursor:
+        cursor.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (%s, %s, %s, %s)', 
+                       (url_name, text, expiry_time, is_encrypted))
     db.commit()
 
 # Fetch text from the database, handle optional decryption
 def fetch_text(url_name, password=None):
     db = get_db()
-    row = db.execute('SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,)).fetchone()
-    if row:
-        expiry_time = datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f')
-        if datetime.now() < expiry_time:
-            content = row['content']
-            if row['is_encrypted']:
-                if not password:
-                    return {"error": "Password required"}
-                try:
-                    return decrypt_text(content, password)
-                except:
-                    return {"error": "Invalid password"}
-            return content
+    with db.cursor() as cursor:
+        cursor.execute('SELECT content, expiry, is_encrypted FROM texts WHERE id = %s', (url_name,))
+        row = cursor.fetchone()
+        
+        if row:
+            expiry_time = row[1]
+            if datetime.now() < expiry_time:
+                content = row[0]
+                is_encrypted = row[2]
+                if is_encrypted:
+                    if not password:
+                        return {"error": "Password required"}
+                    try:
+                        return decrypt_text(content, password)
+                    except Exception:
+                        return {"error": "Invalid password"}
+                return content
     return None
 
 # Encrypt text using a password
@@ -104,7 +110,8 @@ def derive_key_from_password(password):
 def delete_expired_texts():
     with app.app_context():
         db = get_db()
-        db.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(),))
+        with db.cursor() as cursor:
+            cursor.execute('DELETE FROM texts WHERE expiry < %s', (datetime.now(),))
         db.commit()
 
 # Get expiry time based on the expiry option
@@ -207,7 +214,7 @@ def show_text(url_name):
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
     if text:
-        return render_template('shared_text.html', text=text,)
+        return render_template('shared_text.html', text=text)
     else:
         return render_template('404.html'), 404
 
