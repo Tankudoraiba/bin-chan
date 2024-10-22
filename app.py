@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, url_for, abort, jsonify, g
+from flask import Flask, request, redirect, render_template, url_for, abort, jsonify, g, session
 import sqlite3
 import uuid
 from datetime import datetime, timedelta
@@ -9,8 +9,12 @@ import logging
 from cryptography.fernet import Fernet
 import base64
 import hashlib
+import os
 
 app = Flask(__name__)
+
+# Set a secret key for session management
+app.secret_key = os.urandom(24)
 
 # Load configurations
 app.config['DATABASE'] = 'db.sqlite3'
@@ -19,7 +23,7 @@ app.config['RATE_LIMIT_DURATION'] = 1  # Duration in minutes for the limit windo
 app.config['COOLDOWN_PERIOD'] = 3      # Cooldown period in minutes after exceeding limit
 
 # Initialize logging
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 
 # Create a new structure to hold rate-limiting info
 rate_limit_data = defaultdict(lambda: {"timestamps": [], "last_limit_hit": None})
@@ -144,14 +148,12 @@ def is_rate_limited(ip):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    """ Handle the index route. """
     if request.method == 'POST':
         text = request.form['text']
         url_name = request.form.get('url_name', '').strip()
-        expiry_option = request.form.get('expiry_option')  # Get the expiry option
+        expiry_option = request.form.get('expiry_option')
         password = request.form.get('password', '').strip()
 
-        # Validate text and URL name
         if not text or len(text) > 6000:
             return jsonify({"error": "Invalid text!"}), 400
 
@@ -161,19 +163,16 @@ def index():
         if url_name and len(url_name) > 40:
             return jsonify({"error": "URL name must be 40 characters or less!"}), 400
 
-        # Rate limiting check
         ip = request.remote_addr
         if is_rate_limited(ip):
             return jsonify({"error": "Too many requests. Please try again later."}), 429
 
-        # Generate unique URL if not provided
         if not url_name:
             url_name = str(uuid.uuid4())[:8]
 
         if fetch_text(url_name):
             return jsonify({"error": "URL name already taken!"}), 400
 
-        # Determine expiry time based on user selection
         expiry_mapping = {
             '10m': timedelta(minutes=10),
             '1h': timedelta(hours=1),
@@ -183,33 +182,34 @@ def index():
         }
         expiry_time = datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
 
-        # Encrypt text if password is provided
         is_encrypted = False
         if password:
             text = encrypt_text(text, password)
             is_encrypted = True
+            session['password'] = password  # Store password in session
 
         store_text(url_name, text, expiry_time, is_encrypted)
 
-        # Redirect to the shared text URL, skipping the password prompt
         return jsonify({"url": url_for('show_text', url_name=url_name)}), 200
 
     return render_template('index.html')
 
+
 @app.route('/<url_name>', methods=['GET', 'POST'])
 def show_text(url_name):
-    """ Display the shared text or prompt for password if needed. """
     password = None
-    
+
     if request.method == 'POST':
         password = request.form.get('password')
 
-    # Fetch text, checking if a password is required
+    # Check if a password was stored in the session (from when the creator generated the text)
+    if 'password' in session:
+        password = session.pop('password')  # Remove it after using, to avoid session clutter
+
     text = fetch_text(url_name, password)
-    
+
     if isinstance(text, dict) and 'error' in text:
         if text['error'] == "Password required":
-            # Only ask for password if the entry is encrypted and no password has been entered
             return render_template('password_prompt.html', url_name=url_name)
         else:
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
@@ -220,11 +220,12 @@ def show_text(url_name):
         return render_template('404.html'), 404
 
 
+
 @app.route('/text/<url_name>', methods=['GET'])
 def get_text(url_name):
     """ Get text as plain text, allowing password input. """
     # Retrieve the password from query parameter or header
-    password = request.args.get('password') or request.headers.get('X-Text-Password')
+    password = request.headers.get('pswd')
     
     # Fetch and decrypt the text if needed
     result = fetch_text(url_name, password)

@@ -9,11 +9,12 @@ Bin-chan is a lightweight web application for securely sharing text snippets wit
 ## Features
 
 1. **Temporary Text Sharing**: Users can submit and share text that will automatically expire after a set period (1 hour, 3 hours, 24 hours, or 7 days).
-2. **Custom URLs**: Users can optionally create a custom URL for the text they submit. If no custom URL is provided, a random 8-character string is generated.
+2. **Custom URLs**: Users can optionally create a custom URL up to 40 characters for the text they submit. If no custom URL is provided, a random 8-character string is generated.
 3. **Text Size Limit**: Text submissions are limited to 6000 characters.
 4. **Automatic Expiry**: Text is automatically deleted from the database after its expiration time.
-5. **Alternate endpoint**: You can get the content of the share as plain text for cli aplications. Link changes to http://example.com/text/sharename 
-6. **Password lock and encryption in database**: You can lock share with password. Additionaly it will be encrypted in database, in this way it will not be redable for server admin. you can pass password in curl if you need in cli. Link changes to http://example.com/text/sharename?password=pass
+5. **Alternate Endpoint**: Users can get the content of the share as plain text for cli aplications. Link changes to https://example.com/text/sharename 
+6. **Password Lock and Encryption in Database**: Users can lock share with password. Additionaly it will be encrypted in database, in this way it will not be redable for server admin. Users can pass password in curl if they need it in cli with header, like this: curl -H "pswd: password" https://example.com/text/sharename
+
 ## How to Use the Bin-chan Website
 
 1. **Home Page**:
