@@ -20,4 +20,6 @@ webencodings==0.5.1
 Werkzeug==3.0.4
 WTForms==3.1.2
 zope.interface==7.1.0
-psycopg2==2.9.10
+psycopg2_binary==2.9.10
+SQLAlchemy==2.0.36
+asyncpg==0.30.0

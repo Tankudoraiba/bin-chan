@@ -4,7 +4,6 @@ import uuid
 import base64
 import hashlib
 import logging
-import psycopg2
 from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import wraps
@@ -12,6 +11,9 @@ from functools import wraps
 from flask import Flask, request, render_template, url_for, jsonify, g, session
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy import create_engine, Column, String, Text, DateTime, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -27,92 +29,68 @@ app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 logging.basicConfig(level=logging.WARNING)
 rate_limit_data = defaultdict(lambda: {"timestamps": [], "last_limit_hit": None})
 
-# Get a database connection
-def get_db():
-    if 'db' not in g:
-        try:
-            g.db = psycopg2.connect(app.config['DATABASE_URL'])
-            g.db.autocommit = True  # Use autocommit for PostgreSQL
-        except psycopg2.Error as e:
-            logging.error(f"Database connection error: {e}")
-            abort(500)
-    return g.db
+# Database setup
+Base = declarative_base()
+engine = create_engine(app.config['DATABASE_URL'])
+SessionFactory = sessionmaker(bind=engine)
+db_session = scoped_session(SessionFactory)
 
-# Close the database connection after each request
-@app.teardown_appcontext
-def close_db(exception=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+# Define the Text model
+class Text(Base):
+    __tablename__ = 'texts'
+    
+    id = Column(String(40), primary_key=True)
+    content = Column(Text, nullable=False)
+    expiry = Column(DateTime, nullable=False)
+    is_encrypted = Column(Boolean, default=False)
 
 # Initialize the database schema
 def init_db():
-    db = get_db()
-    with db.cursor() as cursor:
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS texts (
-                id VARCHAR(40) PRIMARY KEY,
-                content TEXT NOT NULL,
-                expiry TIMESTAMP,
-                is_encrypted BOOLEAN DEFAULT FALSE
-            );
-        ''')
-    db.commit()
+    Base.metadata.create_all(engine)
 
 # Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
-    db = get_db()
-    with db.cursor() as cursor:
-        cursor.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (%s, %s, %s, %s)', 
-                       (url_name, text, expiry_time, is_encrypted))
-    db.commit()
+    new_text = Text(id=url_name, content=text, expiry=expiry_time, is_encrypted=is_encrypted)
+    db_session.add(new_text)
+    db_session.commit()
 
 # Fetch text from the database, handle optional decryption
 def fetch_text(url_name, password=None):
-    db = get_db()
-    with db.cursor() as cursor:
-        cursor.execute('SELECT content, expiry, is_encrypted FROM texts WHERE id = %s', (url_name,))
-        row = cursor.fetchone()
-        
-        if row:
-            expiry_time = row[1]
-            if datetime.now() < expiry_time:
-                content = row[0]
-                is_encrypted = row[2]
-                if is_encrypted:
-                    if not password:
-                        return {"error": "Password required"}
-                    try:
-                        return decrypt_text(content, password)
-                    except Exception:
-                        return {"error": "Invalid password"}
-                return content
+    text_entry = db_session.query(Text).filter_by(id=url_name).first()
+    
+    if text_entry:
+        if datetime.now() < text_entry.expiry:
+            content = text_entry.content
+            if text_entry.is_encrypted:
+                if not password:
+                    return {"error": "Password required"}
+                try:
+                    return decrypt_text(content, password)
+                except Exception:
+                    return {"error": "Invalid password"}
+            return content
     return None
 
-# Encrypt text using a password
+# Encryption and decryption functions (same as before)
 def encrypt_text(text, password):
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.encrypt(text.encode()).decode()
 
-# Decrypt text using a password
 def decrypt_text(encrypted_text, password):
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.decrypt(encrypted_text.encode()).decode()
 
-# Derive a cryptographic key from a password
 def derive_key_from_password(password):
     key = hashlib.sha256(password.encode('utf-8')).digest()
     return base64.urlsafe_b64encode(key)
 
 # Delete expired texts from the database
 def delete_expired_texts():
-    with app.app_context():
-        db = get_db()
-        with db.cursor() as cursor:
-            cursor.execute('DELETE FROM texts WHERE expiry < %s', (datetime.now(),))
-        db.commit()
+    now = datetime.now()
+    db_session.query(Text).filter(Text.expiry < now).delete()
+    db_session.commit()
 
 # Get expiry time based on the expiry option
 def get_expiry_time(expiry_option):
@@ -137,7 +115,7 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
 scheduler.start()
 
-# Check if the user is rate-limited
+# Rate limiting functions (same as before)
 def is_rate_limited(ip):
     now = datetime.now()
     data = rate_limit_data[ip]
