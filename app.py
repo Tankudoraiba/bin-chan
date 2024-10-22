@@ -21,6 +21,8 @@ app.config['DATABASE'] = 'db.sqlite3'
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 
 logging.basicConfig(level=logging.WARNING)
 rate_limit_data = defaultdict(lambda: {"timestamps": [], "last_limit_hit": None})
