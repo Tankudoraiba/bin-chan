@@ -1,16 +1,17 @@
-from flask import Flask, request, render_template, url_for, jsonify, g, session
-import sqlite3
-import uuid
-from datetime import datetime, timedelta
+import os
 import re
-from collections import defaultdict
-from apscheduler.schedulers.background import BackgroundScheduler
-import logging
-from cryptography.fernet import Fernet
+import uuid
 import base64
 import hashlib
-import os
+import logging
+import sqlite3
+from datetime import datetime, timedelta
+from collections import defaultdict
 from functools import wraps
+
+from flask import Flask, request, render_template, url_for, jsonify, g, session
+from cryptography.fernet import Fernet
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
