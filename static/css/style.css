@@ -51,7 +51,7 @@ textarea {
     width: calc(100% - 20px);
     background-color: #a6a6a6;
     color: #121212;
-    height: 100px;
+    height: 20vh;
     max-height: 30vh;
     margin-bottom: 10px;
     padding: 10px;
@@ -160,7 +160,7 @@ button:hover {
 
 /* Text box styling */
 .text-box {
-    padding: 20px;
+    padding: 10px;
     margin-bottom: 10px;
     background-color: #a6a6a6;
     color: #121212;
@@ -213,12 +213,4 @@ button:hover {
     margin-right: 10px;
     color: mintcream;
     text-align: right;
-}
-
-/* Box-sizing adjustment */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    /* Include padding/border in width/height */
 }
