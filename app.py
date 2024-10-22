@@ -14,6 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -26,7 +27,7 @@ app.config['COOLDOWN_PERIOD'] = 5  # minutes
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)  # Set logging to INFO level
 rate_limit_data = defaultdict(lambda: {"timestamps": [], "last_limit_hit": None})
 
 # Database setup
@@ -71,7 +72,7 @@ def fetch_text(url_name, password=None):
             return content
     return None
 
-# Encryption and decryption functions (same as before)
+# Encryption and decryption functions
 def encrypt_text(text, password):
     key = derive_key_from_password(password)
     fernet = Fernet(key)
@@ -92,10 +93,12 @@ def delete_expired_texts():
     try:
         deleted_count = db_session.query(Text).filter(Text.expiry < now).delete()
         db_session.commit()
-        print(f"Deleted {deleted_count} expired texts.")
+        logging.info(f"Deleted {deleted_count} expired texts.")
     except SQLAlchemyError as e:
         db_session.rollback()  # Rollback in case of error
-        print(f"Error occurred: {str(e)}")
+        logging.error(f"SQLAlchemy error occurred while deleting expired texts: {str(e)}")
+    except Exception as e:
+        logging.error(f"Unexpected error occurred: {str(e)}")
 
 # Get expiry time based on the expiry option
 def get_expiry_time(expiry_option):
@@ -117,15 +120,16 @@ def validate_password(session, request):
 
 # Initialize and start the scheduler for cleaning up expired texts
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
+scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1, misfire_grace_time=60)
 scheduler.start()
 
-# Rate limiting functions (same as before)
+# Rate limiting functions
 def is_rate_limited(ip):
     now = datetime.now()
     data = rate_limit_data[ip]
     timestamps = data["timestamps"]
     
+    # Clean up old timestamps
     while timestamps and timestamps[0] < now - timedelta(minutes=app.config['RATE_LIMIT_DURATION']):
         timestamps.pop(0)
 
