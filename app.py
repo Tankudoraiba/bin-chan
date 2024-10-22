@@ -119,9 +119,18 @@ def validate_password(session, request):
     return password
 
 # Initialize and start the scheduler for cleaning up expired texts
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1, misfire_grace_time=60)
-scheduler.start()
+last_cleanup = datetime.now() - timedelta(minutes=10)  # Initialize to allow immediate cleanup
+
+@app.before_request
+def cleanup_expired_texts():
+    global last_cleanup
+    now = datetime.now()
+    
+    # Run cleanup only if at least 10 minutes have passed since the last cleanup
+    if (now - last_cleanup) > timedelta(minutes=10):
+        delete_expired_texts()
+        last_cleanup = now
+
 
 # Rate limiting functions
 def is_rate_limited(ip):
