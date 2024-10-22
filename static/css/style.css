@@ -79,9 +79,9 @@ input[type="password"] {
 /* Centered buttons container */
 .buttons {
     display: flex;
-    justify-content: center; /* Center elements horizontally */
-    align-items: center; /* Center elements vertically */
-    gap: 10px; /* Optional spacing between elements */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 /* Submit button styling */
@@ -96,10 +96,10 @@ button {
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 40px; /* Set fixed height */
+    height: 40px;
     font-size: 16px;
-    margin: 0; /* Reset margin */
-    padding: 0; /* Reset padding */
+    margin: 0;
+    padding: 0;
 }
 
 button:hover {
@@ -113,8 +113,8 @@ button:hover {
     -moz-appearance: none;
     background-color: #b80000;
     color: white;
-    padding: 10px; /* Adjust padding for consistency */
-    margin: 0; /* Reset margin */
+    padding: 10px;
+    margin: 0;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -122,8 +122,8 @@ button:hover {
     font-weight: bold;
     text-align: center;
     transition: background-color 0.3s ease;
-    height: 40px; /* Set fixed height */
-    width: 120px; /* Match width with button */
+    height: 40px;
+    width: 120px;
     outline: none;
 }
 
@@ -188,7 +188,8 @@ button:hover {
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 120px;
-    height: 40px; /* Set fixed height */
+    height: 40px;
+    /* Set fixed height */
     font-size: 16px;
 }
 
@@ -201,9 +202,11 @@ button:hover {
 .green-bg {
     background-color: green;
 }
+
 .no-hover:hover {
-    background-color: green; /* Disable hover effect when .no-hover is applied */
+    background-color: green;
 }
+
 /* Character count styling */
 #charCount {
     font-size: 14px;
@@ -214,6 +217,9 @@ button:hover {
 }
 
 /* Box-sizing adjustment */
-*, *::before, *::after {
-    box-sizing: border-box; /* Include padding/border in width/height */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    /* Include padding/border in width/height */
 }
