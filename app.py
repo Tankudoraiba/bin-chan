@@ -88,9 +88,20 @@ def derive_key_from_password(password):
 
 # Delete expired texts from the database
 def delete_expired_texts():
-    now = datetime.now()
-    db_session.query(Text).filter(Text.expiry < now).delete()
-    db_session.commit()
+    try:
+        # Ensure you're using a timezone-aware datetime
+        tz = pytz.timezone('UTC')  # Change to your desired timezone
+        now = datetime.now(tz)
+        
+        # Execute delete operation
+        deleted_count = db_session.query(Text).filter(Text.expiry < now).delete()
+        db_session.commit()
+        
+        print(f"Deleted {deleted_count} expired texts.")
+        
+    except SQLAlchemyError as e:
+        db_session.rollback()  # Roll back the transaction on error
+        print(f"An error occurred: {e}")
 
 # Get expiry time based on the expiry option
 def get_expiry_time(expiry_option):
