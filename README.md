@@ -2,6 +2,9 @@
 
 # Bin-chan: A Temporary Text Sharing Web Application
 
+## Vercel
+Due to vercel limitations this branch presents modified app that uses postgresql to store shares.
+
 ## Overview
 
 Bin-chan is a lightweight web application for securely sharing text snippets with an expiration time. Users can submit a piece of text, set an expiry time with password, and share a unique URL to access the text before it expires. After the set expiry time, the text is automatically deleted. This makes Bin-chan an ideal solution for sharing temporary or sensitive information.
