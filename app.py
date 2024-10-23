@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import wraps
 
-from flask import Flask, request, render_template, url_for, jsonify, g, session
+from flask import Flask, request, render_template, url_for, jsonify, g, session, send_from_directory
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Boolean
