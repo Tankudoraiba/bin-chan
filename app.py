@@ -227,6 +227,10 @@ def get_text(url_name):
         return result, 200, {'Content-Type': 'text/plain'}
     return "Text not found or expired", 404
 
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory(app.root_path, 'robots.txt', mimetype='text/plain')
+
 @app.errorhandler(Exception)
 def handle_exception(e):
     logging.error(f"Exception: {e}")
