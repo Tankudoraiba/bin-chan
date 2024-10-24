@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import wraps
 
-from flask import Flask, request, render_template, url_for, jsonify, g, session
+from flask import Flask, request, render_template, url_for, jsonify, g, session, send_from_directory
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -223,6 +223,14 @@ def get_text(url_name):
     if result:
         return result, 200, {'Content-Type': 'text/plain'}
     return "Text not found or expired", 404
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return app.send_static_file(filename)
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory(app.root_path, 'robots.txt', mimetype='text/plain')
 
 @app.errorhandler(Exception)
 def handle_exception(e):
