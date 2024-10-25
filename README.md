@@ -18,6 +18,5 @@ Bin-chan is a lightweight web application for securely sharing text snippets wit
 ### Prerequisites
 
 Make sure you have the following installed on your system:
-- Python 3.x with apscheduler
+- Python 3.x
 - SQLite (for local database storage)
-- Flask (Python web framework)
