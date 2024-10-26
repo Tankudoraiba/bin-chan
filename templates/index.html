@@ -5,28 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Bin-chan, a bin share like Pastebin, but it forgets! Share and auto-delete text with custom expiration" />
-    <meta property="og:title" content="Bin-chan | A Forgetful Text Bin" />
+        content="Bin-chan, a bin share like Pastebin, but it forgets! Share and auto-delete text with custom expiration">
+    <meta name="keywords"
+        content="text bin, Pastebin alternative, auto-delete text, share text, shared bin, temporary text storage, expire text, private text sharing, disposable text sharing, anonymous text bin, secure text sharing, ephemeral text storage, Bin-chan, self-deleting text, code snippets, notes sharing, encrypted text bin, timed text deletion, short-term text sharing, share notes securely, secure online notepad">
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Bin-chan | A Forgetful Text Bin">
     <meta property="og:description"
-        content="A bin share like Pastebin, but it forgets! Share text with custom expiry options" />
-    <meta property="og:image" content="{{ url_for('static', filename='images/logo.png') }}" />
-    <meta property="og:url" content="https://bin.tanku.ovh" />
-    <meta property="og:type" content="website" />
-    <meta name="google-site-verification" content="e6uZRl4dzIQV8N8ylkx9dU7eO215TgM21Ckp5rwMeVs" />
+        content="A bin share like Pastebin, but it forgets! Share text with custom expiry options">
+    <meta property="og:image" content="https://bin.tanku.ovh/static/images/logo.png">
+    <meta property="og:url" content="https://bin.tanku.ovh">
+    <meta property="og:type" content="website">
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bin-chan | A Forgetful Text Bin">
+    <meta name="twitter:description"
+        content="A bin share like Pastebin, but it forgets! Share text with custom expiry options">
+    <meta name="twitter:image" content="https://bin.tanku.ovh/static/images/logo.png">
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="e6uZRl4dzIQV8N8ylkx9dU7eO215TgM21Ckp5rwMeVs">
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#4d4d4d">
     <title>Bin-chan | Fill bin</title>
+    <!-- Stylesheets and Fonts -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
-    <link rel="icon" type="image/png" href="/static/images/favicon-48x48.png" sizes="48x48" />
-    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg" />
-    <link rel="shortcut icon" href="/static/images/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="Bin-chan" />
-    <link rel="manifest" href="/static/images/site.webmanifest" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="/static/images/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Bin-chan">
+    <link rel="manifest" href="/static/images/site.webmanifest">
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 </head>
 
 <body>
