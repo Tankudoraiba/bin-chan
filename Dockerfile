@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create the directory for the SQLite database
-RUN mkdir -p /var/db && chown -R binchan:binchan /var/db
+RUN mkdir -p /var/db
 
 # Expose the port
 EXPOSE 1972
