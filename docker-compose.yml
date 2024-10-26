@@ -1,0 +1,7 @@
+version: 'latest'
+services:
+  bin-chan:
+    build: .
+    ports:
+      - "1972:1972"
+    container_name: bin-chan
