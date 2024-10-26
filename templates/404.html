@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bin-chan, a bin share like Pastebin, but it forgets! Share and auto-delete text with custom expiration" />
+    <meta property="og:title" content="Bin-chan | A Forgetful Text Bin" />
+    <meta property="og:description" content="Sorry, the bin you are looking for does not exist or expired" />
+    <meta property="og:image" content="{{ url_for('static', filename='images/logo.png') }}" />
+    <meta property="og:url" content="https://bin.tanku.ovh" />
+    <meta property="og:type" content="website" />
+    <meta name="google-site-verification" content="e6uZRl4dzIQV8N8ylkx9dU7eO215TgM21Ckp5rwMeVs" />
     <title>Bin-chan | Bin is empty</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +26,7 @@
     <main class="content">
         <div class="container">
             <h1>404 - Page Not Found</h1>
-            <p>Sorry, the link you are looking for does not exist or expired.</p>
+            <p>Sorry, the bin you are looking for does not exist or expired.</p>
             <p>You can return to the <a href="{{ url_for('index') }}">home page</a> to share your text.</p>
         </div>
     </main>
