@@ -15,16 +15,20 @@
 </head>
 
 <body>
-    <div class="container">
-        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
-        <div class="text-box" id="text-to-copy">{{ text | e}}</div>
-        <div class="buttons">
-            <button class="copy-link-button" onclick="copyLink()">Link</button>
-            <button class="copy-button" onclick="copyText()">Copy</button>
-            <button class="return-button" onclick="Return()">Home</button>
+    <main class="content">
+        <div class="container">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
+            <div class="text-box" id="text-to-copy">{{ text | e}}</div>
+            <div class="buttons">
+                <button class="copy-link-button" onclick="copyLink()">Link</button>
+                <button class="copy-button" onclick="copyText()">Copy</button>
+                <button class="return-button" onclick="Return()">Home</button>
+            </div>
         </div>
-    </div>
-
+    </main>
+    <footer class="footer">
+        Made by drunk Tanku | <a href="https://github.com/tankudoraiba/bin-chan" target="_blank">GitHub</a>
+    </footer> 
     <script>
         function copyText() {
             // Select the text content
@@ -78,6 +82,7 @@
         }
 
     </script>
+    
 </body>
 
 </html>

@@ -1,17 +1,22 @@
 /* Styling the body */
 body {
-    font-family: "Roboto", sans-serif;
-    font-style: normal;
-    background-color: #1f1f1f;
-    margin: 0;
-    padding: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     min-height: 100vh;
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+    background-color: #1f1f1f;
 }
 
-/* Container styles */
+/* Main content area takes available space */
+.content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Container styles remain the same */
 .container {
     text-align: center;
     background-color: #4d4d4d;
@@ -23,6 +28,26 @@ body {
     overflow: hidden;
     width: 100%;
     max-width: 1000px;
+}
+
+/* Footer styling */
+.footer {
+    background-color: #4d4d4d;
+    color: mintcream;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.footer a {
+    color: mintcream;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
 
 /* Form wrapper styles */

@@ -21,28 +21,34 @@
 </head>
 
 <body>
-    <div class="container">
-        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
-        <form id="textForm">
-            <textarea name="text" placeholder="Enter your text..." required></textarea><br>
-            <div id="charCount">0/6000</div> 
-            <input type="text" name="url_name" placeholder="Custom URL (optional)">
-            <input type="password" name="password" placeholder="Password (optional)">
-            <div class="buttons">
-                <select name="expiry_option" required class="styled-dropdown">
-                    <option value="10m">10 Minutes</option>
-                    <option value="1h">1 Hour</option>
-                    <option value="3h">3 Hours</option>
-                    <option value="24h">24 Hours</option>
-                    <option value="7d">7 Days</option>
-                </select>
-                <button type="submit">Share Text</button>
+    <body>
+        <main class="content">
+            <div class="container">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
+                <form id="textForm">
+                    <textarea name="text" placeholder="Enter your text..." required></textarea><br>
+                    <div id="charCount">0/6000</div> 
+                    <input type="text" name="url_name" placeholder="Custom URL (optional)">
+                    <input type="password" name="password" placeholder="Password (optional)">
+                    <div class="buttons">
+                        <select name="expiry_option" required class="styled-dropdown">
+                            <option value="10m">10 Minutes</option>
+                            <option value="1h">1 Hour</option>
+                            <option value="3h">3 Hours</option>
+                            <option value="24h">24 Hours</option>
+                            <option value="7d">7 Days</option>
+                        </select>
+                        <button type="submit">Share Text</button>
+                    </div>
+                </form>
+                <div id="errorPopup" class="popup" style="display:none;">
+                    <span id="errorMessage"></span>
+                </div>
             </div>
-        </form>
-        <div id="errorPopup" class="popup" style="display:none;">
-            <span id="errorMessage"></span>
-        </div>
-    </div>
+        </main>
+        <footer class="footer">
+            Made by drunk Tanku | <a href="https://github.com/tankudoraiba/bin-chan" target="_blank">GitHub</a>
+        </footer> 
 
     <script>
         $(document).ready(function () {
@@ -77,6 +83,7 @@
             });
         });
     </script>
+    
 </body>
 
 </html>
