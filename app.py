@@ -29,8 +29,6 @@ rate_limit_data = defaultdict(
     lambda: {"timestamps": [], "last_limit_hit": None})
 
 # Get a database connection
-
-
 def get_db():
     try:
         if 'db' not in g:
@@ -42,8 +40,6 @@ def get_db():
         abort(500)
 
 # Close the database connection after each request
-
-
 @app.teardown_appcontext
 def close_db(exception=None):
     db = g.pop('db', None)
@@ -51,8 +47,6 @@ def close_db(exception=None):
         db.close()
 
 # Initialize the database schema
-
-
 def init_db():
     db = get_db()
     db.execute('''
@@ -66,8 +60,6 @@ def init_db():
     db.commit()
 
 # Store text in the database
-
-
 def store_text(url_name, text, expiry_time, is_encrypted=False):
     db = get_db()
     db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)',
@@ -75,8 +67,6 @@ def store_text(url_name, text, expiry_time, is_encrypted=False):
     db.commit()
 
 # Fetch text from the database, handle optional decryption
-
-
 def fetch_text(url_name, password=None):
     db = get_db()
     row = db.execute(
@@ -96,31 +86,23 @@ def fetch_text(url_name, password=None):
     return None
 
 # Encrypt text using a password
-
-
 def encrypt_text(text, password):
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.encrypt(text.encode()).decode()
 
 # Decrypt text using a password
-
-
 def decrypt_text(encrypted_text, password):
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.decrypt(encrypted_text.encode()).decode()
 
 # Derive a cryptographic key from a password
-
-
 def derive_key_from_password(password):
     key = hashlib.sha256(password.encode('utf-8')).digest()
     return base64.urlsafe_b64encode(key)
 
 # Delete expired texts from the database
-
-
 def delete_expired_texts():
     with app.app_context():
         db = get_db()
@@ -128,8 +110,6 @@ def delete_expired_texts():
         db.commit()
 
 # Get expiry time based on the expiry option
-
-
 def get_expiry_time(expiry_option):
     expiry_mapping = {
         '10m': timedelta(minutes=10),
@@ -141,8 +121,6 @@ def get_expiry_time(expiry_option):
     return datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
 
 # Validate password from session or request form
-
-
 def validate_password(session, request):
     password = request.form.get('password', '').strip()
     if 'password' in session:
@@ -156,8 +134,6 @@ scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
 scheduler.start()
 
 # Check if the user is rate-limited
-
-
 def is_rate_limited(ip):
     now = datetime.now()
     data = rate_limit_data[ip]
@@ -177,8 +153,6 @@ def is_rate_limited(ip):
     return False
 
 # Rate limit decorator
-
-
 def rate_limit(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -187,7 +161,6 @@ def rate_limit(func):
             return jsonify({"error": "Too many requests. Please try again later."}), 429
         return func(*args, **kwargs)
     return wrapper
-
 
 @app.route('/', methods=['GET', 'POST'])
 @rate_limit
@@ -224,7 +197,6 @@ def index():
 
     return render_template('index.html')
 
-
 @app.route('/<url_name>', methods=['GET', 'POST'])
 @rate_limit
 def show_text(url_name):
@@ -242,7 +214,6 @@ def show_text(url_name):
     else:
         return render_template('404.html'), 404
 
-
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit
 def get_text(url_name):
@@ -256,22 +227,18 @@ def get_text(url_name):
         return result, 200, {'Content-Type': 'text/plain'}
     return "Text not found or expired", 404
 
-
 @app.route('/static/<path:filename>')
 def static_files(filename):
     return app.send_static_file(filename)
 
-
 @app.route('/robots.txt')
 def robots_txt():
-    return send_from_directory(app.root_path, 'robots.txt', mimetype='text/plain')
-
+    return send_from_directory('static/files', 'robots.txt', mimetype='text/plain')
 
 @app.errorhandler(Exception)
 def handle_exception(e):
     logging.error(f"Exception: {e}")
     return jsonify({"error": str(e)}), 500
-
 
 if __name__ == '__main__':
     with app.app_context():
