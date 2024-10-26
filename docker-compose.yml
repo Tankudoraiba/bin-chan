@@ -5,3 +5,8 @@ services:
     ports:
       - "1972:1972"
     container_name: bin-chan
+    environment:
+      - DATABASE_URL=/var/db/db.sqlite3  
+    volumes:
+      - ./data:/var/db  
+    restart: unless-stopped  

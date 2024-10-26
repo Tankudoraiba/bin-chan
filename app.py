@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Configurations
-app.config['DATABASE'] = 'db.sqlite3'
+app.config['DATABASE'] = os.environ.get('DATABASE_URL', 'db.sqlite3')
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
