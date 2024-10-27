@@ -210,9 +210,9 @@ def show_text(url_name):
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
     if text:
-        return render_template('shared_text.html', text=text,)
+        return render_template('shared_text.html', text=text)
     else:
-        return render_template('404.html'), 404
+        return render_template('shared_text.html', text=None, expired=True)
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit

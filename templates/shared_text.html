@@ -47,12 +47,35 @@
     <main class="content">
         <div class="container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <div class="text-box" id="text-to-copy">{{ text | e}}</div>
+            {% if text %}
+            <div class="text-box" id="text-to-copy">{{ text | e }}</div>
             <div class="buttons">
                 <button class="copy-link-button" onclick="copyLink()">Link</button>
                 <button class="copy-button" onclick="copyText()">Copy</button>
                 <button class="return-button" onclick="Return()">Home</button>
             </div>
+            <script>
+                // Check for expiration every 10 seconds
+                setInterval(() => {
+                    fetch("{{ url_for('get_text', url_name=url_name) }}")
+                        .then(response => {
+                            if (response.status === 404) {
+                                // If the text is not found (expired), refresh the page
+                                location.reload();
+                            }
+                        })
+                        .catch(err => console.error("Error checking expiration:", err));
+                }, 10000); // Check every 10 seconds
+            </script>
+            {% else %}
+            <div class="popup">This link has expired. You will be redirected shortly...</div>
+            <script>
+                // Refresh after a delay if the link has expired
+                setTimeout(() => {
+                    location.reload();
+                }, 3000); // Refresh after 3 seconds
+            </script>
+            {% endif %}
         </div>
     </main>
     <footer class="footer">
@@ -110,23 +133,6 @@
                 });
         }
 
-        function checkIfExpired() {
-            const urlName = "{{ url_name }}"; // Pass the URL name from Flask to JavaScript
-
-            fetch(`/text/${urlName}`)
-                .then(response => {
-                    if (response.status === 404) {
-                        // Redirect to a 404 page or handle as necessary
-                        window.location.href = '/404'; // Adjust the path as needed
-                    }
-                })
-                .catch(err => {
-                    console.error("Error checking text status: ", err);
-                });
-        }
-
-        // Check for expiration every 30 seconds (adjust as necessary)
-        setInterval(checkIfExpired, 30000);
     </script>
 
 </body>
