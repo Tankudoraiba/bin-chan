@@ -12,7 +12,7 @@
     <meta property="og:title" content="Bin-chan | A Forgetful Text Bin">
     <meta property="og:description"
         content="A bin share like Pastebin, but it forgets! Share text with custom expiry options">
-    <meta property="og:image" content="{{ url_for('static', filename='images/logo.png') }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/og_logo.png') }}">
     <meta property="og:url" content="{{ url_for('index', _external=True) }}">
     <meta property="og:type" content="website">
     <!-- Twitter Card meta tags -->
@@ -20,7 +20,7 @@
     <meta name="twitter:title" content="Bin-chan | A Forgetful Text Bin">
     <meta name="twitter:description"
         content="A bin share like Pastebin, but it forgets! Share text with custom expiry options">
-    <meta name="twitter:image" content="{{ url_for('static', filename='images/logo.png') }}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/og_logo.png') }}">
     <!-- Google Verification -->
     <meta name="google-site-verification" content="e6uZRl4dzIQV8N8ylkx9dU7eO215TgM21Ckp5rwMeVs">
     <!-- Theme Color -->
@@ -50,7 +50,7 @@
     <body>
         <main class="content">
             <div class="container">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
                 <form id="textForm">
                     <textarea name="text" placeholder="Enter your text..." required></textarea><br>
                     <div id="charCount">0/6000</div>
