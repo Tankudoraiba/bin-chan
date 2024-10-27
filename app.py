@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import wraps
 
-from flask import Flask, request, render_template, url_for, jsonify, g, session, send_from_directory, make_response
+from flask import Flask, request, render_template, url_for, jsonify, g, session, send_from_directory
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -203,9 +203,6 @@ def show_text(url_name):
     password = validate_password(session, request)
     text = fetch_text(url_name, password)
 
-    # Create the response
-    response = make_response()
-
     if isinstance(text, dict) and 'error' in text:
         if text['error'] == "Password required!":
             return render_template('password_prompt.html', url_name=url_name)
@@ -213,16 +210,9 @@ def show_text(url_name):
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
     if text:
-        response = render_template('shared_text.html', text=text, url_name=url_name)
+        return render_template('shared_text.html', text=text, url_name=url_name)  # Ensure url_name is passed
     else:
         return render_template('404.html'), 404
-
-    # Set cache-control headers
-    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-
-    return response
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit
