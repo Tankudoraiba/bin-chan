@@ -105,7 +105,16 @@
                 // Character counting functionality
                 $('textarea[name="text"]').on('input', function () {
                     let charCount = $(this).val().length;
-                    $('#charCount').text(charCount + '/6000');
+                    let maxCharCount = 6000;
+                    let charCountElement = $('#charCount');
+                    charCountElement.text(charCount + '/6000');
+
+                    // Change color if character count exceeds 6000
+                    if (charCount > maxCharCount) {
+                        charCountElement.css('color', '#b80000');
+                    } else {
+                        charCountElement.css('color', ''); 
+                    }
                 });
             });
         </script>
