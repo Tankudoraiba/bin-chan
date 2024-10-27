@@ -1,5 +1,5 @@
-User-agent: *
-Allow: /
-Allow: /static/images
-Allow: /static/css
-Disallow: /*
+User-Agent: *
+Disallow: /*/
+Disallow: /*?
+Allow: /$
+Allow: /static
