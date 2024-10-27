@@ -12,8 +12,8 @@ WORKDIR /app
 COPY requirements.txt ./
 
 # Install dependencies and vim
+RUN apt update && apt install -y vim && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir -r requirements.txt
-RUN apt install vim
 
 # Copy application files into the container with correct ownership
 COPY . .
@@ -23,4 +23,3 @@ EXPOSE 1972
 
 # Command to start the Flask app
 CMD ["flask", "run", "--host=0.0.0.0", "--port=1972"]
-
