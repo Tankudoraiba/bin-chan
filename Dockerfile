@@ -16,15 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files into the container with correct ownership
 COPY . .
 
-# Create the directory for the SQLite database
-RUN mkdir -p /var/db
-
-# Expose the port
-EXPOSE 1972
-
-# Health check
-HEALTHCHECK CMD curl --fail http://localhost:1972/health || exit 1
-
 # Expose the port
 EXPOSE 1972
 
