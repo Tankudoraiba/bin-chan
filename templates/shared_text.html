@@ -110,6 +110,23 @@
                 });
         }
 
+        function checkIfExpired() {
+            const urlName = "{{ url_name }}"; // Pass the URL name from Flask to JavaScript
+
+            fetch(`/text/${urlName}`)
+                .then(response => {
+                    if (response.status === 404) {
+                        // Redirect to a 404 page or handle as necessary
+                        window.location.href = '/404'; // Adjust the path as needed
+                    }
+                })
+                .catch(err => {
+                    console.error("Error checking text status: ", err);
+                });
+        }
+
+        // Check for expiration every 30 seconds (adjust as necessary)
+        setInterval(checkIfExpired, 30000);
     </script>
 
 </body>
