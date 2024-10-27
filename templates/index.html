@@ -98,6 +98,11 @@
                             // Handle error response
                             $('#errorMessage').text(xhr.responseJSON.error); // Set the error message
                             $('#errorPopup').show(); // Show the popup
+
+                            // Make the error popup disappear after 5 seconds with fade out
+                            setTimeout(function () {
+                                $('#errorPopup').fadeOut(4000); // Fades out over 4 seconds
+                            }, 1000); // Starts fade-out after 1 second
                         }
                     });
                 });
@@ -113,7 +118,7 @@
                     if (charCount > maxCharCount) {
                         charCountElement.css('color', '#b80000');
                     } else {
-                        charCountElement.css('color', ''); 
+                        charCountElement.css('color', '');
                     }
                 });
             });

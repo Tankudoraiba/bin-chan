@@ -172,7 +172,7 @@ button:hover {
 /* Error popup styling */
 .popup,
 .error {
-    background-color: red;
+    background-color: #b80000;
     color: white;
     padding: 10px;
     margin-top: 10px;
