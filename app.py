@@ -212,7 +212,7 @@ def show_text(url_name):
     if text:
         return render_template('shared_text.html', text=text, url_name=url_name)  # Ensure url_name is passed
     else:
-        return render_template('404.html'), 404
+        return render_template('404.html'), 200
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit
