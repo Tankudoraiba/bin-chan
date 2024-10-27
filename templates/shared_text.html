@@ -122,27 +122,29 @@
 
         // Function to check for updates to the shared text
         function checkForUpdates() {
-            const urlName = "{{ url_name|e }}"; // Use the URL name from the context
-            fetch(`/text/${urlName}`)
+            fetch(`/text/{{ url_name|e }}`)
                 .then(response => {
                     if (response.ok) {
                         return response.text();
                     } else if (response.status === 404) {
                         // If the text is expired or not found, redirect to the homepage
-                        alert("The text has expired or does not exist.");
-                        window.location.href = '/${urlName}'; // Change to the main page URL
+                        window.location.href = '/{{ url_name|e }}'; // Change to the main page URL
+                    } else if (response.status === 403) {
+                        // Do nothing for 403 responses
+                        return; // Early return
                     }
                 })
                 .then(data => {
                     // Update the text box with the new data
-                    document.getElementById("text-to-copy").innerText = data;
+                    if (data) { // Only update if data is not undefined
+                        document.getElementById("text-to-copy").innerText = data;
+                    }
                 })
                 .catch(error => console.error('Error fetching updated text:', error));
         }
 
         // Set an interval to check for updates every minute (60000 ms)
         setInterval(checkForUpdates, 60000);
-
     </script>
 
 </body>
