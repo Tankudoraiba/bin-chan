@@ -122,7 +122,7 @@
 
         // Function to check for updates to the shared text
         function checkForUpdates() {
-            const urlName = "{{ url_name }}"; // Use the URL name from the context
+            const urlName = "{{ url_name|e }}"; // Use the URL name from the context
             fetch(`/text/${urlName}`)
                 .then(response => {
                     if (response.ok) {
