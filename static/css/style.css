@@ -242,3 +242,38 @@ button:hover {
     color: mintcream;
     text-align: right;
 }
+
+/* General scrollbar styling */
+textarea::-webkit-scrollbar,
+input[type="text"]::-webkit-scrollbar,
+.text-box::-webkit-scrollbar {
+    width: 8px; /* Sets a thin width for the scrollbar */
+}
+
+textarea::-webkit-scrollbar-track,
+input[type="text"]::-webkit-scrollbar-track,
+.text-box::-webkit-scrollbar-track {
+    background-color: #4d4d4d; /* Matches the container background */
+    border-radius: 10px; /* Adds rounded edges to the track */
+}
+
+textarea::-webkit-scrollbar-thumb,
+input[type="text"]::-webkit-scrollbar-thumb,
+.text-box::-webkit-scrollbar-thumb {
+    background-color: #b80000; /* Matches the button color */
+    border-radius: 10px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover,
+input[type="text"]::-webkit-scrollbar-thumb:hover,
+.text-box::-webkit-scrollbar-thumb:hover {
+    background-color: #960000; /* Darkens on hover, matching button hover color */
+}
+
+/* Scrollbar styling for Firefox */
+textarea,
+input[type="text"],
+.text-box {
+    scrollbar-width: thin;
+    scrollbar-color: #b80000 #4d4d4d; /* thumb color, track color */
+}

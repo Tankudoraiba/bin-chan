@@ -10,8 +10,10 @@ WORKDIR /app
 
 # Copy requirements.txt first to leverage Docker cache
 COPY requirements.txt ./
-# Install dependencies
+
+# Install dependencies and vim
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt install vim
 
 # Copy application files into the container with correct ownership
 COPY . .
