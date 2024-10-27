@@ -201,17 +201,16 @@ def index():
 @rate_limit
 def show_text(url_name):
     password = validate_password(session, request)
-    text_data = fetch_text(url_name, password)
+    text = fetch_text(url_name, password)
 
-    if isinstance(text_data, dict) and 'error' in text_data:
-        if text_data['error'] == "Password required!":
+    if isinstance(text, dict) and 'error' in text:
+        if text['error'] == "Password required!":
             return render_template('password_prompt.html', url_name=url_name)
         else:
-            return render_template('password_prompt.html', url_name=url_name, error=text_data['error'])
+            return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
-    if text_data:
-        expiry_time = datetime.strptime(text_data['expiry'], '%Y-%m-%d %H:%M:%S.%f')  # Ensure this is available
-        return render_template('shared_text.html', text=text_data['content'], expiry_time=expiry_time)
+    if text:
+        return render_template('shared_text.html', text=text,)
     else:
         return render_template('404.html'), 404
 
