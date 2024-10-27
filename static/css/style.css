@@ -28,6 +28,7 @@ body {
     overflow: hidden;
     width: 100%;
     max-width: 1000px;
+    min-width: 350px;
 }
 
 /* Footer styling */
@@ -243,37 +244,48 @@ button:hover {
     text-align: right;
 }
 
-/* General scrollbar styling */
+/* Scrollbar styling for WebKit browsers (Chrome, Edge) */
+body::-webkit-scrollbar,
 textarea::-webkit-scrollbar,
 input[type="text"]::-webkit-scrollbar,
 .text-box::-webkit-scrollbar {
-    width: 8px; /* Sets a thin width for the scrollbar */
+    width: 8px; /* Thin scrollbar */
 }
 
+body::-webkit-scrollbar-track,
 textarea::-webkit-scrollbar-track,
 input[type="text"]::-webkit-scrollbar-track,
 .text-box::-webkit-scrollbar-track {
-    background-color: #4d4d4d; /* Matches the container background */
-    border-radius: 10px; /* Adds rounded edges to the track */
-}
-
-textarea::-webkit-scrollbar-thumb,
-input[type="text"]::-webkit-scrollbar-thumb,
-.text-box::-webkit-scrollbar-thumb {
-    background-color: #b80000; /* Matches the button color */
+    background-color: #4d4d4d;
     border-radius: 10px;
 }
 
+body::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb,
+input[type="text"]::-webkit-scrollbar-thumb,
+.text-box::-webkit-scrollbar-thumb {
+    background-color: #b80000;
+    border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover,
 textarea::-webkit-scrollbar-thumb:hover,
 input[type="text"]::-webkit-scrollbar-thumb:hover,
 .text-box::-webkit-scrollbar-thumb:hover {
-    background-color: #960000; /* Darkens on hover, matching button hover color */
+    background-color: #960000;
 }
 
 /* Scrollbar styling for Firefox */
+body,
 textarea,
 input[type="text"],
 .text-box {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #b80000 #4d4d4d; /* Thumb color and track color */
+}
+
+/* Fallback styling for other browsers */
+html {
     scrollbar-width: thin;
-    scrollbar-color: #b80000 #4d4d4d; /* thumb color, track color */
+    scrollbar-color: #b80000 #4d4d4d;
 }
