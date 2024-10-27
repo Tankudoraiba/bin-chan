@@ -235,6 +235,10 @@ def static_files(filename):
 def robots_txt():
     return send_from_directory('static/files', 'robots.txt', mimetype='text/plain')
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 @app.errorhandler(Exception)
 def handle_exception(e):
     logging.error(f"Exception: {e}")
