@@ -2,6 +2,7 @@ version: '3'
 services:
   bin-chan:
     build: .
+    image: bin-chan/latest
     ports:
       - "1972:1972"
     container_name: bin-chan
