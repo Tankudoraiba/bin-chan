@@ -77,11 +77,11 @@ def fetch_text(url_name, password=None):
             content = row['content']
             if row['is_encrypted']:
                 if not password:
-                    return {"error": "Password required"}
+                    return {"error": "Password required!"}
                 try:
                     return decrypt_text(content, password)
                 except:
-                    return {"error": "Invalid password"}
+                    return {"error": "Invalid password!"}
             return content
     return None
 
@@ -158,7 +158,7 @@ def rate_limit(func):
     def wrapper(*args, **kwargs):
         ip = request.remote_addr
         if is_rate_limited(ip):
-            return jsonify({"error": "Too many requests. Please try again later."}), 429
+            return jsonify({"error": "Too many requests. Please try again later"}), 429
         return func(*args, **kwargs)
     return wrapper
 
@@ -204,7 +204,7 @@ def show_text(url_name):
     text = fetch_text(url_name, password)
 
     if isinstance(text, dict) and 'error' in text:
-        if text['error'] == "Password required":
+        if text['error'] == "Password required!":
             return render_template('password_prompt.html', url_name=url_name)
         else:
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
