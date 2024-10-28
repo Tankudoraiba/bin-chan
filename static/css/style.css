@@ -28,7 +28,7 @@ body {
     overflow: hidden;
     width: 100%;
     max-width: 1000px;
-    min-width: 350px;
+    min-width: 20%;
 }
 
 /* Footer styling */
