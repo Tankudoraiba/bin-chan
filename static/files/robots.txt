@@ -1,5 +1,7 @@
 User-Agent: *
-Disallow: /*/
+Disallow: /*
 Disallow: /*?
 Allow: /$
 Allow: /static
+Allow: /sitemap.xml
+Sitemap: https://bin.tanku.ovh/sitemap.xml
