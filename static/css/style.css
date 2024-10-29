@@ -25,10 +25,11 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 3vh;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
     width: 100%;
     max-width: 1000px;
-    min-width: 20%;
+    min-width: 300px;
 }
 
 /* Footer styling */
@@ -204,9 +205,17 @@ button:hover {
 }
 
 .countdown-timer {
-    margin-top: 8px;
     color: mintcream;
     font-size: smaller;
+    background: #4d4d4d;
+    padding: 2px 5px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: absolute;
+    text-wrap-mode: nowrap;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Copy and return button styles */
