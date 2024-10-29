@@ -113,27 +113,35 @@
         }
 
         // Function to check for updates to the shared text
-        // Get the expiry timestamp from the server
-        const expiryTimestamp = {{ expiry_timestamp | tojson }};
+        const urlParts = window.location.pathname.split('/');
+        const shareId = urlParts[urlParts.length - 1];
+        fetch(`/get_expiry/${shareId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.expiry_timestamp) {
+                    const expiryTime = data.expiry_timestamp;
 
-        function startCountdown() {
-            const now = new Date().getTime();
-            const distance = expiryTimestamp - now;
+                    // Initialize countdown
+                    function startCountdown() {
+                        const now = Date.now();
+                        const timeRemaining = expiryTime - now;
 
-            if (distance <= 0) {
-                location.reload();  // Refresh page when time reaches zero
-            } else {
-                // Calculate seconds remaining
-                const secondsRemaining = Math.floor((distance % (1000 * 60)) / 1000);
-                document.getElementById("countdown").textContent = `${secondsRemaining} seconds`;
+                        if (timeRemaining > 0) {
+                            const seconds = Math.floor(timeRemaining / 1000) % 60;
+                            const minutes = Math.floor(timeRemaining / (1000 * 60)) % 60;
+                            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
 
-                // Update every second
-                setTimeout(startCountdown, 1000);
-            }
-        }
+                            document.getElementById("countdown").textContent =
+                                `${hours}h ${minutes}m ${seconds}s`;
 
-        // Start the countdown if there's an expiry timestamp
-        if (expiryTimestamp) startCountdown();
+                            setTimeout(startCountdown, 1000);
+                        } else {
+                            location.reload();
+                        }
+                    }
+                    startCountdown();
+                }
+            });
     </script>
 
 </body>

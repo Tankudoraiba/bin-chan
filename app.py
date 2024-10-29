@@ -251,6 +251,18 @@ def robots_txt():
 def sitemap():
     return send_from_directory('static/files', 'sitemap.xml', mimetype='text/plain')
 
+# Assuming expiry_time is in UTC in your database.
+@app.route('/get_expiry/<int:share_id>')
+def get_expiry(share_id):
+    # Query the expiry time from the database
+    expiry_time = get_expiry_time_from_database(share_id)  # Fetches expiry in UTC
+    if expiry_time:
+        # Convert to Unix timestamp in milliseconds
+        expiry_timestamp = int(expiry_time.timestamp() * 1000)
+        return jsonify({'expiry_timestamp': expiry_timestamp})
+    else:
+        return jsonify({'error': 'Share not found'}), 404
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
