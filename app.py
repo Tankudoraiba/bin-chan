@@ -85,6 +85,14 @@ def fetch_text(url_name, password=None):
             return content
     return None
 
+# Get expiry time 
+def get_expiry_time(url_name):
+    db = get_db()
+    row = db.execute('SELECT expiry FROM texts WHERE id = ?', (url_name,)).fetchone()
+    if row:
+        return datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f')
+    return None
+
 # Encrypt text using a password
 def encrypt_text(text, password):
     key = derive_key_from_password(password)
@@ -202,6 +210,7 @@ def index():
 def show_text(url_name):
     password = validate_password(session, request)
     text = fetch_text(url_name, password)
+    expiry_time = get_expiry_time(url_name)  # Fetch the expiry time
 
     if isinstance(text, dict) and 'error' in text:
         if text['error'] == "Password required!":
@@ -210,9 +219,12 @@ def show_text(url_name):
             return render_template('password_prompt.html', url_name=url_name, error=text['error'])
 
     if text:
-        return render_template('shared_text.html', text=text, url_name=url_name)  # Ensure url_name is passed
+        # Pass expiry time in milliseconds for JavaScript countdown
+        expiry_timestamp = int(expiry_time.timestamp() * 1000) if expiry_time else None
+        return render_template('shared_text.html', text=text, url_name=url_name, expiry_timestamp=expiry_timestamp)
     else:
         return render_template('404.html'), 200
+
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit
