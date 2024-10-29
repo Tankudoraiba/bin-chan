@@ -72,17 +72,17 @@ def fetch_text(url_name, password=None):
     row = db.execute(
         'SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,)).fetchone()
     if row:
-        expiry_time = datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f')
-        if datetime.now() < expiry_time:
+        expiry_time = datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f').replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) < expiry_time:
             content = row['content']
             if row['is_encrypted']:
                 if not password:
                     return {"error": "Password required!"}
                 try:
-                    return decrypt_text(content, password)
+                    return decrypt_text(content, password), expiry_time
                 except:
                     return {"error": "Invalid password!"}
-            return content
+            return content, expiry_time
     return None
 
 # Encrypt text using a password
@@ -201,22 +201,20 @@ def index():
 @rate_limit
 def show_text(url_name):
     password = validate_password(session, request)
-    text_data = fetch_text(url_name, password)
+    result = fetch_text(url_name, password)
 
-    # Check if text_data is a dictionary
-    if isinstance(text_data, dict):
-        if 'error' in text_data:
-            if text_data['error'] == "Password required!":
-                return render_template('password_prompt.html', url_name=url_name)
-            else:
-                return render_template('password_prompt.html', url_name=url_name, error=text_data['error'])
+    if isinstance(result, dict) and 'error' in result:
+        if result['error'] == "Password required!":
+            return render_template('password_prompt.html', url_name=url_name)
+        else:
+            return render_template('password_prompt.html', url_name=url_name, error=result['error'])
 
-        # Proceed if text_data contains valid data
-        expiry_time = datetime.strptime(text_data['expiry'], '%Y-%m-%d %H:%M:%S.%f')
-        return render_template('shared_text.html', text=text_data['content'], url_name=url_name, expiry_time=expiry_time.timestamp())
-    
-    # If text_data is not a dictionary, handle the error gracefully
-    return render_template('404.html', error="Text not found or an unexpected error occurred."), 200
+    if result:
+        text, expiry_time = result  # Assuming `fetch_text` now returns (text, expiry_time)
+        remaining_time = (expiry_time - datetime.now(timezone.utc)).total_seconds()
+        return render_template('shared_text.html', text=text, url_name=url_name, remaining_time=remaining_time)
+    else:
+        return render_template('404.html'), 200
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit

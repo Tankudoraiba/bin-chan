@@ -49,8 +49,8 @@
     <main class="content">
         <div class="container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <div id="countdown-timer" class="countdown-timer">Time remaining: <span id="timer"></span></div>
             <div class="text-box" id="text-to-copy">{{ text | e }}</div>
-            <div class="countdown" id="countdown"></div> <!-- Countdown display -->
             <div class="buttons">
                 <button class="copy-link-button" onclick="copyLink()">Link</button>
                 <button class="copy-button" onclick="copyText()">Copy</button>
@@ -114,28 +114,31 @@
         }
 
         // Function to check for updates to the shared text
-        const expiryTime = {{ expiry_time }} * 1000; // Convert to milliseconds
-        const countdownElement = document.getElementById('countdown');
+        const remainingTime = {{ remaining_time| int }}; // Time remaining in seconds
 
-        function startCountdown() {
-            const currentTime = Date.now();
-            const remainingTime = expiryTime - currentTime;
+        // Countdown logic
+        function startCountdown(duration) {
+            let timer = duration, minutes, seconds;
+            const countdownElement = document.getElementById("timer");
 
-            if (remainingTime <= 0) {
-                // Time expired, refresh the page
-                window.location.reload();
-            } else {
-                // Calculate minutes and seconds
-                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-                countdownElement.innerText = `Expires in: ${minutes}m ${seconds}s`;
+            const countdownInterval = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
-                // Update countdown every second
-                setTimeout(startCountdown, 1000);
-            }
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                countdownElement.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(countdownInterval);
+                    location.reload();  // Refresh the page when countdown reaches 0
+                }
+            }, 1000);
         }
 
-        startCountdown(); // Start the countdown
+        // Initialize the countdown with the remaining time
+        startCountdown(remainingTime);
     </script>
 
 </body>
