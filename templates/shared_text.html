@@ -49,7 +49,6 @@
     <main class="content">
         <div class="container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            {% if text %}
             <div class="text-box" id="text-to-copy">{{ text | e }}</div>
             <p>Time left: <span id="countdown">Calculating...</span></p>
             <div class="buttons">
