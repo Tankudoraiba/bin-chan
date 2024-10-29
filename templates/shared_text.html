@@ -49,12 +49,12 @@
     <main class="content">
         <div class="container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <div id="countdown-timer" class="countdown-timer">Time remaining: <span id="timer"></span></div>
             <div class="text-box" id="text-to-copy">{{ text | e }}</div>
             <div class="buttons">
                 <button class="copy-link-button" onclick="copyLink()">Link</button>
                 <button class="copy-button" onclick="copyText()">Copy</button>
                 <button class="return-button" onclick="Return()">Home</button>
+                <div id="countdown-timer" class="countdown-timer">Time remaining: <span id="timer"></span></div>
             </div>
         </div>
     </main>
@@ -114,21 +114,24 @@
         }
 
         // Function to check for updates to the shared text
-        const remainingTime = {{ remaining_time| int }}; // Time remaining in seconds
+        const remainingTime = {{ remaining_time|int }}; // Time remaining in seconds
 
         // Countdown logic
         function startCountdown(duration) {
-            let timer = duration, minutes, seconds;
+            let timer = duration;
             const countdownElement = document.getElementById("timer");
 
             const countdownInterval = setInterval(() => {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
+                const days = Math.floor(timer / (24 * 60 * 60));
+                const hours = Math.floor((timer % (24 * 60 * 60)) / (60 * 60));
+                const minutes = Math.floor((timer % (60 * 60)) / 60);
+                const seconds = timer % 60;
 
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                countdownElement.textContent = minutes + ":" + seconds;
+                countdownElement.textContent = 
+                    (days > 0 ? days + "d " : "") +
+                    (hours > 0 ? hours + "h " : "") +
+                    (minutes < 10 ? "0" : "") + minutes + "m " +
+                    (seconds < 10 ? "0" : "") + seconds + "s";
 
                 if (--timer < 0) {
                     clearInterval(countdownInterval);

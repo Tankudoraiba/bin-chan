@@ -203,6 +203,16 @@ button:hover {
     max-height: 50vh;
 }
 
+div#countdown-timer {
+    /* position: relative; */
+    /* margin-left: 80%; */
+    margin-bottom: 5px;
+    margin-top: -6px;
+    color: mintcream;
+    /* margin-top: -4%; */
+    font-size: smaller;
+}
+
 /* Copy and return button styles */
 .copy-button,
 .copy-link-button,
