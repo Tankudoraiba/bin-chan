@@ -85,14 +85,6 @@ def fetch_text(url_name, password=None):
             return content
     return None
 
-# Get expiry time 
-def get_expiry_time(url_name):
-    db = get_db()
-    row = db.execute('SELECT expiry FROM texts WHERE id = ?', (url_name,)).fetchone()
-    if row:
-        return datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f')
-    return None
-
 # Encrypt text using a password
 def encrypt_text(text, password):
     key = derive_key_from_password(password)
@@ -209,22 +201,20 @@ def index():
 @rate_limit
 def show_text(url_name):
     password = validate_password(session, request)
-    text = fetch_text(url_name, password)
-    expiry_time = get_expiry_time(url_name)  # Fetch the expiry time
+    text_data = fetch_text(url_name, password)
 
-    if isinstance(text, dict) and 'error' in text:
-        if text['error'] == "Password required!":
+    if isinstance(text_data, dict) and 'error' in text_data:
+        if text_data['error'] == "Password required!":
             return render_template('password_prompt.html', url_name=url_name)
         else:
-            return render_template('password_prompt.html', url_name=url_name, error=text['error'])
+            return render_template('password_prompt.html', url_name=url_name, error=text_data['error'])
 
-    if text:
-        # Pass expiry time in milliseconds for JavaScript countdown
-        expiry_timestamp = int(expiry_time.timestamp() * 1000) if expiry_time else None
-        return render_template('shared_text.html', text=text, url_name=url_name, expiry_timestamp=expiry_timestamp)
+    if text_data:
+        # Get the expiry time as a timestamp
+        expiry_time = datetime.strptime(text_data['expiry'], '%Y-%m-%d %H:%M:%S.%f')
+        return render_template('shared_text.html', text=text_data['content'], url_name=url_name, expiry_time=expiry_time.timestamp())
     else:
         return render_template('404.html'), 200
-
 
 @app.route('/text/<url_name>', methods=['GET'])
 @rate_limit
@@ -250,18 +240,6 @@ def robots_txt():
 @app.route('/sitemap.xml')
 def sitemap():
     return send_from_directory('static/files', 'sitemap.xml', mimetype='text/plain')
-
-# Assuming expiry_time is in UTC in your database.
-@app.route('/get_expiry/<int:share_id>')
-def get_expiry(share_id):
-    # Query the expiry time from the database
-    expiry_time = get_expiry_time_from_database(share_id)  # Fetches expiry in UTC
-    if expiry_time:
-        # Convert to Unix timestamp in milliseconds
-        expiry_timestamp = int(expiry_time.timestamp() * 1000)
-        return jsonify({'expiry_timestamp': expiry_timestamp})
-    else:
-        return jsonify({'error': 'Share not found'}), 404
 
 @app.errorhandler(404)
 def page_not_found(e):

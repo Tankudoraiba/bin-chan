@@ -50,12 +50,13 @@
         <div class="container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
             <div class="text-box" id="text-to-copy">{{ text | e }}</div>
-            <p>Time left: <span id="countdown">Calculating...</span></p>
+            <div class="countdown" id="countdown"></div> <!-- Countdown display -->
             <div class="buttons">
                 <button class="copy-link-button" onclick="copyLink()">Link</button>
                 <button class="copy-button" onclick="copyText()">Copy</button>
                 <button class="return-button" onclick="Return()">Home</button>
             </div>
+        </div>
     </main>
     <footer class="footer">
         Made by drunk Tanku |<a href="https://github.com/tankudoraiba/bin-chan" target="_blank">GitHub</a>
@@ -113,35 +114,28 @@
         }
 
         // Function to check for updates to the shared text
-        const urlParts = window.location.pathname.split('/');
-        const shareId = urlParts[urlParts.length - 1];
-        fetch(`/get_expiry/${shareId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.expiry_timestamp) {
-                    const expiryTime = data.expiry_timestamp;
+        const expiryTime = {{ expiry_time }} * 1000; // Convert to milliseconds
+        const countdownElement = document.getElementById('countdown');
 
-                    // Initialize countdown
-                    function startCountdown() {
-                        const now = Date.now();
-                        const timeRemaining = expiryTime - now;
+        function startCountdown() {
+            const currentTime = Date.now();
+            const remainingTime = expiryTime - currentTime;
 
-                        if (timeRemaining > 0) {
-                            const seconds = Math.floor(timeRemaining / 1000) % 60;
-                            const minutes = Math.floor(timeRemaining / (1000 * 60)) % 60;
-                            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            if (remainingTime <= 0) {
+                // Time expired, refresh the page
+                window.location.reload();
+            } else {
+                // Calculate minutes and seconds
+                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                countdownElement.innerText = `Expires in: ${minutes}m ${seconds}s`;
 
-                            document.getElementById("countdown").textContent =
-                                `${hours}h ${minutes}m ${seconds}s`;
+                // Update countdown every second
+                setTimeout(startCountdown, 1000);
+            }
+        }
 
-                            setTimeout(startCountdown, 1000);
-                        } else {
-                            location.reload();
-                        }
-                    }
-                    startCountdown();
-                }
-            });
+        startCountdown(); // Start the countdown
     </script>
 
 </body>
