@@ -51,21 +51,12 @@
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
             {% if text %}
             <div class="text-box" id="text-to-copy">{{ text | e }}</div>
+            <p>Time left: <span id="countdown">Calculating...</span></p>
             <div class="buttons">
                 <button class="copy-link-button" onclick="copyLink()">Link</button>
                 <button class="copy-button" onclick="copyText()">Copy</button>
                 <button class="return-button" onclick="Return()">Home</button>
             </div>
-            {% else %}
-            <script>
-                // If text is expired, refresh the page
-                setTimeout(() => {
-                    location.reload();
-                }, 3000); // Refresh after 3 seconds
-            </script>
-            <div class="text-box">This link has expired. You will be redirected shortly...</div>
-            {% endif %}
-        </div>
     </main>
     <footer class="footer">
         Made by drunk Tanku |<a href="https://github.com/tankudoraiba/bin-chan" target="_blank">GitHub</a>
@@ -126,7 +117,6 @@
         // Get the expiry timestamp from the server
         const expiryTimestamp = {{ expiry_timestamp | tojson }};
 
-        // Calculate the remaining time and set up countdown
         function startCountdown() {
             const now = new Date().getTime();
             const distance = expiryTimestamp - now;
@@ -134,12 +124,16 @@
             if (distance <= 0) {
                 location.reload();  // Refresh page when time reaches zero
             } else {
+                // Calculate seconds remaining
                 const secondsRemaining = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById("countdown").textContent = `${secondsRemaining} seconds`;
+
+                // Update every second
                 setTimeout(startCountdown, 1000);
             }
         }
 
-        // Start the countdown
+        // Start the countdown if there's an expiry timestamp
         if (expiryTimestamp) startCountdown();
     </script>
 
