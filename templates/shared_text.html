@@ -144,33 +144,33 @@
         startCountdown(remainingTime);
 
         let isNavigatingAway = false;
-let lastReloadTime = Date.now(); // Track the last time the page was reloaded
+        let lastReloadTime = Date.now(); // Track the last time the page was reloaded
 
-// Track if the user is navigating away from the page
-window.addEventListener("beforeunload", function() {
-  isNavigatingAway = true;
-});
+        // Track if the user is navigating away from the page
+        window.addEventListener("beforeunload", function () {
+            isNavigatingAway = true;
+        });
 
-document.addEventListener("visibilitychange", function() {
-  const currentTime = Date.now();
-  
-  // Only refresh if the tab is visible, the user is not navigating away,
-  // and at least 60 seconds have passed since the last refresh
-  if (
-    document.visibilityState === "visible" &&
-    !isNavigatingAway &&
-    currentTime - lastReloadTime > 60000 // 60 seconds interval, adjust as needed
-  ) {
-    location.replace(window.location.href); // Refresh the page
-    lastReloadTime = currentTime; // Update the last reload time
-  }
+        document.addEventListener("visibilitychange", function () {
+            const currentTime = Date.now();
 
-  // Reset the navigation flag when the tab becomes visible again
-  if (document.visibilityState === "visible") {
-    isNavigatingAway = false;
-  }
-});
-</script>
+            // Only refresh if the tab is visible, the user is not navigating away,
+            // and at least 60 seconds have passed since the last refresh
+            if (
+                document.visibilityState === "visible" &&
+                !isNavigatingAway &&
+                currentTime - lastReloadTime > 60000 // 60 seconds interval, adjust as needed
+            ) {
+                location.replace(window.location.href); // Refresh the page
+                lastReloadTime = currentTime; // Update the last reload time
+            }
+
+            // Reset the navigation flag when the tab becomes visible again
+            if (document.visibilityState === "visible") {
+                isNavigatingAway = false;
+            }
+        });
+    </script>
 </body>
 
 </html>
