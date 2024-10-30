@@ -117,7 +117,7 @@
         const remainingTime = {{ remaining_time| int }}; // Time remaining in seconds
 
         // Countdown logic
-        const remainingTime = {{ remaining_time| int }}; // Server-provided time remaining
+       const remainingTime = {{ remaining_time|int }}; // Server-provided time remaining
 
         function startCountdown(duration) {
             let timer = duration;
@@ -143,59 +143,59 @@
             }, 1000);
         }
 
-        const remainingTime = {{ remaining_time| int }}; // Server-provided time remaining
+        const remainingTime = {{ remaining_time|int }}; // Server-provided time remaining
 
-        function startCountdown(duration) {
-            let timer = duration;
-            const countdownElement = document.getElementById("timer");
-            clearInterval(window.countdownInterval);  // Clear any existing interval on reload
+function startCountdown(duration) {
+    let timer = duration;
+    const countdownElement = document.getElementById("timer");
+    clearInterval(window.countdownInterval);  // Clear any existing interval on reload
 
-            window.countdownInterval = setInterval(() => {
-                const days = Math.floor(timer / (24 * 60 * 60));
-                const hours = Math.floor((timer % (24 * 60 * 60)) / (60 * 60));
-                const minutes = Math.floor((timer % (60 * 60)) / 60);
-                const seconds = timer % 60;
+    window.countdownInterval = setInterval(() => {
+        const days = Math.floor(timer / (24 * 60 * 60));
+        const hours = Math.floor((timer % (24 * 60 * 60)) / (60 * 60));
+        const minutes = Math.floor((timer % (60 * 60)) / 60);
+        const seconds = timer % 60;
 
-                countdownElement.textContent =
-                    (days > 0 ? days + "d " : "") +
-                    (hours > 0 ? hours + "h " : "") +
-                    (minutes < 10 ? "0" : "") + minutes + "m " +
-                    (seconds < 10 ? "0" : "") + seconds + "s";
+        countdownElement.textContent =
+            (days > 0 ? days + "d " : "") +
+            (hours > 0 ? hours + "h " : "") +
+            (minutes < 10 ? "0" : "") + minutes + "m " +
+            (seconds < 10 ? "0" : "") + seconds + "s";
 
-                if (--timer < 0) {
-                    clearInterval(window.countdownInterval);
-                    location.reload();  // Refresh when countdown reaches 0
-                }
-            }, 1000);
+        if (--timer < 0) {
+            clearInterval(window.countdownInterval);
+            location.reload();  // Refresh when countdown reaches 0
         }
+    }, 1000);
+}
 
-        startCountdown(remainingTime);
+startCountdown(remainingTime);
 
-        let isNavigatingAway = false;
-        let lastReloadTime = Date.now();
+let isNavigatingAway = false;
+let lastReloadTime = Date.now();
 
-        // Track if navigating away
-        window.addEventListener("beforeunload", function () {
-            isNavigatingAway = true;
-        });
+// Track if navigating away
+window.addEventListener("beforeunload", function () {
+    isNavigatingAway = true;
+});
 
-        document.addEventListener("visibilitychange", function () {
-            const currentTime = Date.now();
+document.addEventListener("visibilitychange", function () {
+    const currentTime = Date.now();
 
-            if (
-                document.visibilityState === "visible" &&
-                !isNavigatingAway &&
-                currentTime - lastReloadTime > 60000
-            ) {
-                clearInterval(window.countdownInterval);  // Clear any countdown before reload
-                location.replace(window.location.href);
-                lastReloadTime = currentTime;
-            }
+    if (
+        document.visibilityState === "visible" &&
+        !isNavigatingAway &&
+        currentTime - lastReloadTime > 60000
+    ) {
+        clearInterval(window.countdownInterval);  // Clear any countdown before reload
+        location.reload;
+        lastReloadTime = currentTime;
+    }
 
-            if (document.visibilityState === "visible") {
-                isNavigatingAway = false;
-            }
-        });
+    if (document.visibilityState === "visible") {
+        isNavigatingAway = false;
+    }
+});
     </script>
 </body>
 
