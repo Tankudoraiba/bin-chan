@@ -143,13 +143,11 @@
         // Initialize the countdown with the remaining time
         startCountdown(remainingTime);
 
-        document.addEventListener("visibilitychange", function () {
-            if (document.visibilityState === "visible") {
-                // The tab has become visible, refresh or perform another action here
-                location.reload(); // Caution: This will refresh the page every time it becomes visible
-            }
-        });
-    </script>
+        document.addEventListener("visibilitychange", function() {
+  if (document.visibilityState === "visible") {
+    location.replace(window.location.href);
+  }
+});
 
 </body>
 
