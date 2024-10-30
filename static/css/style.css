@@ -72,10 +72,16 @@ body {
     margin-bottom: 10px;
 }
 
-/* Header styling */
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+/* Tag for stupid bing */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
 }
 
 /* Textarea styling */
@@ -265,7 +271,8 @@ body::-webkit-scrollbar,
 textarea::-webkit-scrollbar,
 input[type="text"]::-webkit-scrollbar,
 .text-box::-webkit-scrollbar {
-    width: 8px; /* Thin scrollbar */
+    width: 8px;
+    /* Thin scrollbar */
 }
 
 body::-webkit-scrollbar-track,
@@ -296,8 +303,10 @@ body,
 textarea,
 input[type="text"],
 .text-box {
-    scrollbar-width: thin; /* Thin scrollbar */
-    scrollbar-color: #b80000 #4d4d4d; /* Thumb color and track color */
+    scrollbar-width: thin;
+    /* Thin scrollbar */
+    scrollbar-color: #b80000 #4d4d4d;
+    /* Thumb color and track color */
 }
 
 /* Fallback styling for other browsers */
