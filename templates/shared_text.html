@@ -161,7 +161,7 @@
                 !isNavigatingAway &&
                 currentTime - lastReloadTime > 60000 // 60 seconds interval, adjust as needed
             ) {
-                location.reload; // Refresh the page
+                location.reload(); // Refresh the page
                 lastReloadTime = currentTime; // Update the last reload time
             }
 
