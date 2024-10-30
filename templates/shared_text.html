@@ -114,7 +114,7 @@
         }
 
         // Function to check for updates to the shared text
-        const remainingTime = {{ remaining_time|int }}; // Time remaining in seconds
+        const remainingTime = {{ remaining_time| int }}; // Time remaining in seconds
 
         // Countdown logic
         function startCountdown(duration) {
@@ -127,7 +127,7 @@
                 const minutes = Math.floor((timer % (60 * 60)) / 60);
                 const seconds = timer % 60;
 
-                countdownElement.textContent = 
+                countdownElement.textContent =
                     (days > 0 ? days + "d " : "") +
                     (hours > 0 ? hours + "h " : "") +
                     (minutes < 10 ? "0" : "") + minutes + "m " +
@@ -142,6 +142,13 @@
 
         // Initialize the countdown with the remaining time
         startCountdown(remainingTime);
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "visible") {
+                // The tab has become visible, refresh or perform another action here
+                location.reload(); // Caution: This will refresh the page every time it becomes visible
+            }
+        });
     </script>
 
 </body>
