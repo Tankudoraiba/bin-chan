@@ -223,10 +223,12 @@ def get_text(url_name):
     result = fetch_text(url_name, password)
 
     if isinstance(result, dict):
-        return result['error'], 403 if 'password' in result['error'].lower() else 404
+        return jsonify(result), 403 if 'password' in result.get('error', '').lower() else 404
 
     if result:
-        return result, 200, {'Content-Type': 'text/plain'}
+        text, expiry_time = result
+        return text, 200, {'Content-Type': 'text/plain'}  # Ensure proper response formatting
+
     return "Text not found or expired", 404
 
 @app.route('/static/<path:filename>')

@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 # Set environment variables to run Flask
 ENV FLASK_APP=app.py
@@ -12,7 +12,7 @@ WORKDIR /app
 COPY requirements.txt ./
 
 # Install dependencies and vim
-RUN apt update && apt install -y vim && rm -rf /var/lib/apt/lists/*
+RUN apk update && apk add --no-cache vim
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files into the container with correct ownership
