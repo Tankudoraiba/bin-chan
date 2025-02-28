@@ -4,7 +4,7 @@ FROM python:3.11-alpine
 # Set environment variables to run Flask
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
-ENV DATABASE_URL=/app/db.sqlite3  # Ensure consistent DB path
+ENV DATABASE_URL=/app/db.sqlite3
 
 # Set the working directory
 WORKDIR /app
