@@ -57,11 +57,14 @@ def init_db():
             open(db_path, 'a').close()  # Create empty file
             logging.info(f"Database file created: {db_path}")
 
+        # Connect to the database
         with sqlite3.connect(db_path) as db:
+            logging.info("Database connection established.")
             cursor = db.cursor()
 
             # Enable foreign key constraints
             cursor.execute("PRAGMA foreign_keys = ON;")
+            logging.info("Foreign key constraints enabled.")
 
             # Check database integrity
             cursor.execute("PRAGMA integrity_check;")
@@ -71,15 +74,19 @@ def init_db():
                 return
 
             # Create 'texts' table if it doesn't exist
-            cursor.execute('''CREATE TABLE IF NOT EXISTS texts (
-                id TEXT PRIMARY KEY,
-                content TEXT NOT NULL,
-                expiry TIMESTAMP,
-                is_encrypted INTEGER DEFAULT 0
-            );''')
+            try:
+                cursor.execute('''CREATE TABLE IF NOT EXISTS texts (
+                    id TEXT PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    expiry TIMESTAMP,
+                    is_encrypted INTEGER DEFAULT 0
+                );''')
+                db.commit()  # Ensure changes are saved
+                logging.info("Table `texts` checked/created successfully.")
+            except sqlite3.Error as e:
+                logging.error(f"SQLite error during table creation: {e}")
+                return
 
-            # Commit changes
-            db.commit()
             logging.info("Database initialized successfully.")
 
     except sqlite3.Error as e:
