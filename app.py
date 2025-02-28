@@ -48,16 +48,20 @@ def close_db(exception=None):
 
 # Initialize the database schema
 def init_db():
-    db = get_db()
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS texts (
-            id TEXT PRIMARY KEY,
-            content TEXT NOT NULL,
-            expiry TIMESTAMP,
-            is_encrypted INTEGER DEFAULT 0
-        );
-    ''')
-    db.commit()
+    try:
+        db = get_db()
+        db.execute('''
+            CREATE TABLE IF NOT EXISTS texts (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                expiry TIMESTAMP,
+                is_encrypted INTEGER DEFAULT 0
+            );
+        ''')
+        db.commit()
+        logging.info("Database initialized successfully.")
+    except sqlite3.Error as e:
+        logging.error(f"Error initializing database: {e}")
 
 # Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
