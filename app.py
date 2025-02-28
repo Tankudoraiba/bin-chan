@@ -48,20 +48,45 @@ def close_db(exception=None):
 
 # Initialize the database schema
 def init_db():
+    """Initialize the database and create necessary tables if they don't exist."""
     try:
-        db = get_db()
-        db.execute('''
-            CREATE TABLE IF NOT EXISTS texts (
-                id TEXT PRIMARY KEY,
-                content TEXT NOT NULL,
-                expiry TIMESTAMP,
-                is_encrypted INTEGER DEFAULT 0
-            );
-        ''')
-        db.commit()
-        logging.info("Database initialized successfully.")
+        # Ensure the database file exists
+        db_path = app.config['DATABASE']
+        if not os.path.exists(db_path):
+            open(db_path, 'a').close()  # Create empty file
+            logging.info(f"Database file created: {db_path}")
+
+        with sqlite3.connect(db_path) as db:
+            cursor = db.cursor()
+
+            # Enable foreign key constraints
+            cursor.execute("PRAGMA foreign_keys = ON;")
+
+            # Check database integrity
+            cursor.execute("PRAGMA integrity_check;")
+            integrity_result = cursor.fetchone()
+            if integrity_result[0] != "ok":
+                logging.error("Database integrity check failed!")
+                return
+
+            # Create 'texts' table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS texts (
+                    id TEXT PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    expiry TIMESTAMP,
+                    is_encrypted INTEGER DEFAULT 0
+                );
+            ''')
+
+            # Commit changes
+            db.commit()
+            logging.info("Database initialized successfully.")
+
     except sqlite3.Error as e:
         logging.error(f"Error initializing database: {e}")
+
+
 
 # Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
