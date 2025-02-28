@@ -50,8 +50,9 @@ def close_db(exception=None):
 def init_db():
     """Initialize the database and create necessary tables if they don't exist."""
     try:
-        # Ensure the database file exists
         db_path = app.config['DATABASE']
+        
+        # Ensure the database file exists
         if not os.path.exists(db_path):
             open(db_path, 'a').close()  # Create empty file
             logging.info(f"Database file created: {db_path}")
@@ -69,15 +70,13 @@ def init_db():
                 logging.error("Database integrity check failed!")
                 return
 
-            # Create 'texts' table
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS texts (
-                    id TEXT PRIMARY KEY,
-                    content TEXT NOT NULL,
-                    expiry TIMESTAMP,
-                    is_encrypted INTEGER DEFAULT 0
-                );
-            ''')
+            # Create 'texts' table if it doesn't exist
+            cursor.execute('''CREATE TABLE IF NOT EXISTS texts (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                expiry TIMESTAMP,
+                is_encrypted INTEGER DEFAULT 0
+            );''')
 
             # Commit changes
             db.commit()
@@ -85,8 +84,6 @@ def init_db():
 
     except sqlite3.Error as e:
         logging.error(f"Error initializing database: {e}")
-
-
 
 # Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
