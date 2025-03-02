@@ -24,10 +24,9 @@ app.config['COOLDOWN_PERIOD'] = 5  # minutes
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 
-# Flag to track if DB is initialized
 db_initialized = False
-
 logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 rate_limit_data = defaultdict(
     lambda: {"timestamps": [], "last_limit_hit": None})
 
