@@ -24,6 +24,10 @@ app.config['COOLDOWN_PERIOD'] = 5  # minutes
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 
+# Set logging to DEBUG for more visibility
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 logging.basicConfig(level=logging.WARNING)
 rate_limit_data = defaultdict(
     lambda: {"timestamps": [], "last_limit_hit": None})
