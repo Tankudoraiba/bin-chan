@@ -100,6 +100,13 @@ def init_db():
         logger.error(f"Unexpected error during database initialization: {e}")
         raise
 
+# Store text in the database
+def store_text(url_name, text, expiry_time, is_encrypted=False):
+    db = get_db()
+    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)',
+               (url_name, text, expiry_time, int(is_encrypted)))
+    db.commit()
+
 # Fetch text from the database, handle optional decryption
 def fetch_text(url_name, password=None):
     db = get_db()
