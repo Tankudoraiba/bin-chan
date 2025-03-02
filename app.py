@@ -48,16 +48,17 @@ def close_db(exception=None):
 
 # Initialize the database schema
 def init_db():
-    """Initialize the database and create necessary tables if they don't exist."""
+    """Initialize the database and create necessary tables."""
     try:
         db_path = app.config['DATABASE']
         
-        # Ensure the database file exists
+        # Ensure the database directory exists and create the file
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Create directory if it doesn't exist
         if not os.path.exists(db_path):
             open(db_path, 'a').close()  # Create empty file
             logging.info(f"Database file created: {db_path}")
 
-        # Connect to the database
+        # Connect to the database with a fresh connection
         with sqlite3.connect(db_path) as db:
             logging.info("Database connection established.")
             cursor = db.cursor()
@@ -73,31 +74,22 @@ def init_db():
                 logging.error("Database integrity check failed!")
                 return
 
-            # Create 'texts' table if it doesn't exist
-            try:
-                cursor.execute('''CREATE TABLE IF NOT EXISTS texts (
-                    id TEXT PRIMARY KEY,
-                    content TEXT NOT NULL,
-                    expiry TIMESTAMP,
-                    is_encrypted INTEGER DEFAULT 0
-                );''')
-                db.commit()  # Ensure changes are saved
-                logging.info("Table `texts` checked/created successfully.")
-            except sqlite3.Error as e:
-                logging.error(f"SQLite error during table creation: {e}")
-                return
+            # Create 'texts' table (removing IF NOT EXISTS for explicit creation)
+            cursor.execute('''CREATE TABLE texts (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                expiry TIMESTAMP,
+                is_encrypted INTEGER DEFAULT 0
+            );''')
+            db.commit()
+            logging.info("Table `texts` created successfully.")
 
             logging.info("Database initialized successfully.")
 
     except sqlite3.Error as e:
         logging.error(f"Error initializing database: {e}")
-
-# Store text in the database
-def store_text(url_name, text, expiry_time, is_encrypted=False):
-    db = get_db()
-    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)',
-               (url_name, text, expiry_time, int(is_encrypted)))
-    db.commit()
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
 
 # Fetch text from the database, handle optional decryption
 def fetch_text(url_name, password=None):
