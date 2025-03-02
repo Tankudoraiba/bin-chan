@@ -198,6 +198,15 @@ def rate_limit(func):
         return func(*args, **kwargs)
     return wrapper
 
+# Check and initialize DB before each request if needed
+@app.before_request
+def ensure_db_initialized():
+    global db_initialized
+    if not db_initialized:
+        with app.app_context():
+            logger.debug("Running late database initialization...")
+            init_db()
+
 @app.route('/', methods=['GET', 'POST'])
 @rate_limit
 def index():
