@@ -36,14 +36,16 @@ rate_limit_data = defaultdict(
 def get_db():
     try:
         if 'db' not in g:
-            g.db = sqlite3.connect(app.config['DATABASE'])
+            db_path = app.config['DATABASE']
+            logger.debug(f"Attempting to connect to database at: {os.path.abspath(db_path)}")
+            g.db = sqlite3.connect(db_path)
             g.db.row_factory = sqlite3.Row
         return g.db
     except sqlite3.Error as e:
-        logging.error(f"Database connection error: {e}")
-        abort(500)
+        logger.error(f"Database connection error: {e}")
+        raise
 
-# Close the database connection after each request
+# Close the database connection
 @app.teardown_appcontext
 def close_db(exception=None):
     db = g.pop('db', None)
@@ -55,24 +57,25 @@ def init_db():
     """Initialize the database and create necessary tables if they don't exist."""
     try:
         db_path = app.config['DATABASE']
+        logger.debug(f"Initializing database at: {os.path.abspath(db_path)}")
         
-        # Ensure the directory exists if it's not in the current directory
+        # Ensure the directory exists
         os.makedirs(os.path.dirname(db_path) or '.', exist_ok=True)
         
-        # Use the same connection method as the rest of your app
+        # Use the app's connection method
         db = get_db()
         cursor = db.cursor()
 
-        logging.info("Database connection established.")
+        logger.info("Database connection established.")
 
         # Enable foreign key constraints
         cursor.execute("PRAGMA foreign_keys = ON;")
-        logging.info("Foreign key constraints enabled.")
+        logger.info("Foreign key constraints enabled.")
 
-        # Check if table exists before creating
+        # Check if table exists
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='texts';")
         if not cursor.fetchone():
-            # Create 'texts' table
+            logger.info("Creating 'texts' table...")
             cursor.execute('''CREATE TABLE texts (
                 id TEXT PRIMARY KEY,
                 content TEXT NOT NULL,
@@ -80,22 +83,23 @@ def init_db():
                 is_encrypted INTEGER DEFAULT 0
             );''')
             db.commit()
-            logging.info("Table `texts` created successfully.")
+            logger.info("Table 'texts' created successfully.")
         else:
-            logging.info("Table `texts` already exists.")
+            logger.info("Table 'texts' already exists.")
 
         # Verify table creation
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='texts';")
         if cursor.fetchone():
-            logging.info("Database initialized successfully.")
+            logger.info("Database initialized successfully.")
         else:
-            logging.error("Table creation failed - table not found after creation attempt!")
+            logger.error("Table creation failed - table not found after creation attempt!")
+            raise RuntimeError("Table creation verification failed")
 
     except sqlite3.Error as e:
-        logging.error(f"Error initializing database: {e}")
-        raise  # Re-raise the exception for better debugging
+        logger.error(f"SQLite error during database initialization: {e}")
+        raise
     except Exception as e:
-        logging.error(f"Unexpected error during database initialization: {e}")
+        logger.error(f"Unexpected error during database initialization: {e}")
         raise
 
 # Fetch text from the database, handle optional decryption
