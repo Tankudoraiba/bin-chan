@@ -20,8 +20,8 @@ app.config['DATABASE'] = os.environ.get('DATABASE_URL', 'db.sqlite3')
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
-app.config['session Cookie_httponly'] = True
-app.config['session Cookie_secure'] = True  # If using HTTPS
+app.config['session_cookie_httponly'] = True
+app.config['session_cookie_secure'] = True  # If using HTTPS
 
 db_initialized = False
 logging.basicConfig(level=logging.WARNING)
@@ -31,9 +31,8 @@ rate_limit_data = defaultdict(
 
 # Database Operations
 def get_db():
-    """
-    Get a database connection.
-    
+    """Get a database connection.
+
     Returns:
         sqlite3 connection object
     """
@@ -49,16 +48,14 @@ def get_db():
         raise
 
 def close_db(exception=None):
-    """
-    Close the database connection.
+    """Close the database connection.
     """
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
 def init_db():
-    """
-    Initialize the database and create necessary tables if they don't exist.
+    """Initialize the database and create necessary tables if they don't exist.
     """
     try:
         db_path = app.config['DATABASE']
@@ -108,9 +105,8 @@ def init_db():
         raise
 
 def store_text(url_name, text, expiry_time, is_encrypted=False):
-    """
-    Store text in the database, with optional encryption if a password is provided.
-    
+    """Store text in the database, with optional encryption if a password is provided.
+
     Parameters:
         url_name (str): The identifier for the text.
         text (str): The text to store.
@@ -118,19 +114,17 @@ def store_text(url_name, text, expiry_time, is_encrypted=False):
         is_encrypted (bool, optional): Whether the text is encrypted. Defaults to False.
     """
     db = get_db()
-    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)',
-               (url_name, text, expiry_time, int(is_encrypted)))
+    db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)', (url_name, text, expiry_time, int(is_encrypted)))
     db.commit()
 
 def fetch_text(url_name, password=None):
-    """
-    Fetch text from the database if it exists and has not expired.
+    """Fetch text from the database if it exists and has not expired.
     If the text is encrypted, decrypt it using the provided password.
-    
+
     Parameters:
         url_name (str): The identifier for the text.
         password (str, optional): The password for decryption if the text is encrypted.
-    
+
     Returns:
         tuple or dict: If the text is found and not expired, returns (text, expiry_time).
         If the text is encrypted and no password is provided, or if the password is invalid, 
@@ -138,8 +132,7 @@ def fetch_text(url_name, password=None):
         If the text is not found or has expired, returns None.
     """
     db = get_db()
-    row = db.execute(
-        'SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,)).fetchone()
+    row = db.execute('SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,)).fetchone()
     if row:
         expiry_time = datetime.strptime(row['expiry'], '%Y-%m-%d %H:%M:%S.%f').replace(tzinfo=timezone.utc)
         if datetime.now(timezone.utc) < expiry_time:
@@ -155,23 +148,21 @@ def fetch_text(url_name, password=None):
     return None
 
 def delete_expired_texts():
-    """
-    Delete expired texts from the database.
+    """Delete expired texts from the database.
     """
     with app.app_context():
         db = get_db()
-        db.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(timezone.utc),))
+        db.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S.%f'),))
         db.commit()
 
 # Encryption Functions
 def encrypt_text(text, password):
-    """
-    Encrypt text using a password.
-    
+    """Encrypt text using a password.
+
     Parameters:
         text (str): The text to encrypt.
         password (str): The password to use for encryption.
-    
+
     Returns:
         str: The encrypted text.
     """
@@ -180,13 +171,12 @@ def encrypt_text(text, password):
     return fernet.encrypt(text.encode()).decode()
 
 def decrypt_text(encrypted_text, password):
-    """
-    Decrypt text using a password.
-    
+    """Decrypt text using a password.
+
     Parameters:
         encrypted_text (str): The encrypted text to decrypt.
         password (str): The password to use for decryption.
-    
+
     Returns:
         str: The decrypted text.
     """
@@ -195,12 +185,11 @@ def decrypt_text(encrypted_text, password):
     return fernet.decrypt(encrypted_text.encode()).decode()
 
 def derive_key_from_password(password):
-    """
-    Derive a cryptographic key from a password.
-    
+    """Derive a cryptographic key from a password.
+
     Parameters:
         password (str): The password to derive the key from.
-    
+
     Returns:
         bytes: The derived key.
     """
@@ -209,12 +198,11 @@ def derive_key_from_password(password):
 
 # Rate Limiting
 def is_rate_limited(ip):
-    """
-    Check if the user with the given IP address is rate-limited.
-    
+    """Check if the user with the given IP address is rate-limited.
+
     Parameters:
         ip (str): The IP address of the user.
-    
+
     Returns:
         bool: True if the user is rate-limited, False otherwise.
     """
@@ -236,8 +224,7 @@ def is_rate_limited(ip):
     return False
 
 def rate_limit(func):
-    """
-    Rate limit decorator to limit the number of requests from a single IP address.
+    """Rate limit decorator to limit the number of requests from a single IP address.
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -249,14 +236,13 @@ def rate_limit(func):
 
 # Helper Functions
 def get_expiry_time(expiry_option):
-    """
-    Get the expiry time based on the expiry option.
-    
+    """Get the expiry time based on the expiry option.
+
     Parameters:
         expiry_option (str): The expiry option (e.g., '10m', '1h', etc.).
-    
+
     Returns:
-        datetime: The expiry time.
+        str: The expiry time in '%Y-%m-%d %H:%M:%S.%f' format.
     """
     expiry_mapping = {
         '10m': timedelta(minutes=10),
@@ -265,16 +251,16 @@ def get_expiry_time(expiry_option):
         '24h': timedelta(days=1),
         '7d': timedelta(days=7)
     }
-    return datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
+    expiry_time = datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
+    return expiry_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
 def validate_password(session, request):
-    """
-    Validate the password from the session or request form.
-    
+    """Validate the password from the session or request form.
+
     Parameters:
         session (flask.session): The Flask session object.
         request (flask.request): The Flask request object.
-    
+
     Returns:
         str: The validated password.
     """
@@ -291,8 +277,7 @@ scheduler.start()
 # Request Handlers
 @app.before_request
 def ensure_db_initialized():
-    """
-    Ensure the database is initialized before each request if needed.
+    """Ensure the database is initialized before each request if needed.
     """
     global db_initialized
     if not db_initialized:
@@ -313,16 +298,19 @@ def index():
         if not text or len(text) > 6000:
             return jsonify({"error": "Invalid text!"}), 400
 
-        if url_name and (not re.match("^[a-zA-Z0-9_-]*$", url_name) or len(url_name) > 40):
-            return jsonify({"error": "Invalid URL name!"}), 400
-
-        if not url_name:
+        if url_name:
+            if not re.match("^[a-zA-Z0-9_-]*$", url_name) or len(url_name) < 3 or len(url_name) > 40:
+                return jsonify({"error": "Invalid URL name! Must be 3-40 characters, consisting of letters, numbers, underscores, and hyphens."}), 400
+        else:
             url_name = str(uuid.uuid4())[:8]
 
         if fetch_text(url_name):
             return jsonify({"error": "URL name already taken!"}), 400
 
-        expiry_time = get_expiry_time(expiry_option).strftime('%Y-%m-%d %H:%M:%S.%f')
+        if password and len(password) < 3:
+            return jsonify({"error": "Password must be at least 3 characters long."}), 400
+
+        expiry_time = get_expiry_time(expiry_option)
 
         is_encrypted = False
         if password:
