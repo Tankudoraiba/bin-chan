@@ -8,7 +8,6 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 from functools import wraps
-
 from flask import Flask, request, render_template, url_for, jsonify, g, session, send_from_directory
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -21,8 +20,8 @@ app.config['DATABASE'] = os.environ.get('DATABASE_URL', 'db.sqlite3')
 app.config['RATE_LIMIT'] = 50
 app.config['RATE_LIMIT_DURATION'] = 1  # minutes
 app.config['COOLDOWN_PERIOD'] = 5  # minutes
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
+app.config['session Cookie_httponly'] = True
+app.config['session Cookie_secure'] = True  # If using HTTPS
 
 db_initialized = False
 logging.basicConfig(level=logging.WARNING)
@@ -30,8 +29,14 @@ logger = logging.getLogger(__name__)
 rate_limit_data = defaultdict(
     lambda: {"timestamps": [], "last_limit_hit": None})
 
-# Get a database connection
+# Database Operations
 def get_db():
+    """
+    Get a database connection.
+    
+    Returns:
+        sqlite3 connection object
+    """
     try:
         if 'db' not in g:
             db_path = app.config['DATABASE']
@@ -43,16 +48,18 @@ def get_db():
         logger.error(f"Database connection error: {e}")
         raise
 
-# Close the database connection
-@app.teardown_appcontext
 def close_db(exception=None):
+    """
+    Close the database connection.
+    """
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
-# Initialize the database schema
 def init_db():
-    """Initialize the database and create necessary tables if they don't exist."""
+    """
+    Initialize the database and create necessary tables if they don't exist.
+    """
     try:
         db_path = app.config['DATABASE']
         logger.debug(f"Initializing database at: {os.path.abspath(db_path)}")
@@ -77,7 +84,7 @@ def init_db():
             cursor.execute('''CREATE TABLE texts (
                 id TEXT PRIMARY KEY,
                 content TEXT NOT NULL,
-                expiry TIMESTAMP,
+                expiry TEXT,
                 is_encrypted INTEGER DEFAULT 0
             );''')
             db.commit()
@@ -100,15 +107,36 @@ def init_db():
         logger.error(f"Unexpected error during database initialization: {e}")
         raise
 
-# Store text in the database
 def store_text(url_name, text, expiry_time, is_encrypted=False):
+    """
+    Store text in the database, with optional encryption if a password is provided.
+    
+    Parameters:
+        url_name (str): The identifier for the text.
+        text (str): The text to store.
+        expiry_time (str): The expiration time for the text in '%Y-%m-%d %H:%M:%S.%f' format.
+        is_encrypted (bool, optional): Whether the text is encrypted. Defaults to False.
+    """
     db = get_db()
     db.execute('INSERT INTO texts (id, content, expiry, is_encrypted) VALUES (?, ?, ?, ?)',
                (url_name, text, expiry_time, int(is_encrypted)))
     db.commit()
 
-# Fetch text from the database, handle optional decryption
 def fetch_text(url_name, password=None):
+    """
+    Fetch text from the database if it exists and has not expired.
+    If the text is encrypted, decrypt it using the provided password.
+    
+    Parameters:
+        url_name (str): The identifier for the text.
+        password (str, optional): The password for decryption if the text is encrypted.
+    
+    Returns:
+        tuple or dict: If the text is found and not expired, returns (text, expiry_time).
+        If the text is encrypted and no password is provided, or if the password is invalid, 
+        returns a dict with an 'error' key.
+        If the text is not found or has expired, returns None.
+    """
     db = get_db()
     row = db.execute(
         'SELECT content, expiry, is_encrypted FROM texts WHERE id = ?', (url_name,)).fetchone()
@@ -126,56 +154,70 @@ def fetch_text(url_name, password=None):
             return content, expiry_time
     return None
 
-# Encrypt text using a password
+def delete_expired_texts():
+    """
+    Delete expired texts from the database.
+    """
+    with app.app_context():
+        db = get_db()
+        db.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(timezone.utc),))
+        db.commit()
+
+# Encryption Functions
 def encrypt_text(text, password):
+    """
+    Encrypt text using a password.
+    
+    Parameters:
+        text (str): The text to encrypt.
+        password (str): The password to use for encryption.
+    
+    Returns:
+        str: The encrypted text.
+    """
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.encrypt(text.encode()).decode()
 
-# Decrypt text using a password
 def decrypt_text(encrypted_text, password):
+    """
+    Decrypt text using a password.
+    
+    Parameters:
+        encrypted_text (str): The encrypted text to decrypt.
+        password (str): The password to use for decryption.
+    
+    Returns:
+        str: The decrypted text.
+    """
     key = derive_key_from_password(password)
     fernet = Fernet(key)
     return fernet.decrypt(encrypted_text.encode()).decode()
 
-# Derive a cryptographic key from a password
 def derive_key_from_password(password):
+    """
+    Derive a cryptographic key from a password.
+    
+    Parameters:
+        password (str): The password to derive the key from.
+    
+    Returns:
+        bytes: The derived key.
+    """
     key = hashlib.sha256(password.encode('utf-8')).digest()
     return base64.urlsafe_b64encode(key)
 
-# Delete expired texts from the database
-def delete_expired_texts():
-    with app.app_context():
-        db = get_db()
-        db.execute('DELETE FROM texts WHERE expiry < ?', (datetime.now(),))
-        db.commit()
-
-# Get expiry time based on the expiry option
-def get_expiry_time(expiry_option):
-    expiry_mapping = {
-        '10m': timedelta(minutes=10),
-        '1h': timedelta(hours=1),
-        '3h': timedelta(hours=3),
-        '24h': timedelta(days=1),
-        '7d': timedelta(days=7)
-    }
-    return datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
-
-# Validate password from session or request form
-def validate_password(session, request):
-    password = request.form.get('password', '').strip()
-    if 'password' in session:
-        password = session.pop('password')
-    return password
-
-
-# Initialize and start the scheduler for cleaning up expired texts
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
-scheduler.start()
-
-# Check if the user is rate-limited
+# Rate Limiting
 def is_rate_limited(ip):
+    """
+    Check if the user with the given IP address is rate-limited.
+    
+    Parameters:
+        ip (str): The IP address of the user.
+    
+    Returns:
+        bool: True if the user is rate-limited, False otherwise.
+    """
     now = datetime.now()
     data = rate_limit_data[ip]
     timestamps = data["timestamps"]
@@ -193,8 +235,10 @@ def is_rate_limited(ip):
     timestamps.append(now)
     return False
 
-# Rate limit decorator
 def rate_limit(func):
+    """
+    Rate limit decorator to limit the number of requests from a single IP address.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         ip = request.remote_addr
@@ -203,14 +247,59 @@ def rate_limit(func):
         return func(*args, **kwargs)
     return wrapper
 
-# Check and initialize DB before each request if needed
+# Helper Functions
+def get_expiry_time(expiry_option):
+    """
+    Get the expiry time based on the expiry option.
+    
+    Parameters:
+        expiry_option (str): The expiry option (e.g., '10m', '1h', etc.).
+    
+    Returns:
+        datetime: The expiry time.
+    """
+    expiry_mapping = {
+        '10m': timedelta(minutes=10),
+        '1h': timedelta(hours=1),
+        '3h': timedelta(hours=3),
+        '24h': timedelta(days=1),
+        '7d': timedelta(days=7)
+    }
+    return datetime.now() + expiry_mapping.get(expiry_option, timedelta(minutes=10))
+
+def validate_password(session, request):
+    """
+    Validate the password from the session or request form.
+    
+    Parameters:
+        session (flask.session): The Flask session object.
+        request (flask.request): The Flask request object.
+    
+    Returns:
+        str: The validated password.
+    """
+    password = request.form.get('password', '').strip()
+    if 'password' in session:
+        password = session.pop('password')
+    return password
+
+# Scheduler Setup
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=delete_expired_texts, trigger="interval", minutes=1)
+scheduler.start()
+
+# Request Handlers
 @app.before_request
 def ensure_db_initialized():
+    """
+    Ensure the database is initialized before each request if needed.
+    """
     global db_initialized
     if not db_initialized:
         with app.app_context():
             logger.debug("Running late database initialization...")
             init_db()
+        db_initialized = True
 
 @app.route('/', methods=['GET', 'POST'])
 @rate_limit
@@ -233,7 +322,7 @@ def index():
         if fetch_text(url_name):
             return jsonify({"error": "URL name already taken!"}), 400
 
-        expiry_time = get_expiry_time(expiry_option)
+        expiry_time = get_expiry_time(expiry_option).strftime('%Y-%m-%d %H:%M:%S.%f')
 
         is_encrypted = False
         if password:
@@ -260,7 +349,7 @@ def show_text(url_name):
             return render_template('password_prompt.html', url_name=url_name, error=result['error'])
 
     if result:
-        text, expiry_time = result  # Assuming `fetch_text` now returns (text, expiry_time)
+        text, expiry_time = result
         remaining_time = (expiry_time - datetime.now(timezone.utc)).total_seconds()
         return render_template('shared_text.html', text=text, url_name=url_name, remaining_time=remaining_time)
     else:
@@ -277,7 +366,7 @@ def get_text(url_name):
 
     if result:
         text, expiry_time = result
-        return text, 200, {'Content-Type': 'text/plain'}  # Ensure proper response formatting
+        return text, 200, {'Content-Type': 'text/plain'}
 
     return "Text not found or expired", 404
 
@@ -293,6 +382,7 @@ def robots_txt():
 def sitemap():
     return send_from_directory('static/files', 'sitemap.xml', mimetype='text/plain')
 
+# Error Handlers
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
