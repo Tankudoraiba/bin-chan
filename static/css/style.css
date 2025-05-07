@@ -1,3 +1,18 @@
+:root {
+    --primary: #6366f1; /* A more modern primary color */
+    --primary-hover: #4f46e5;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --background: #1f1f1f;
+    --surface: #374151; /* Darker surface for contrast */
+    --text: #e5e7eb; /* Lighter text color */
+    --muted: #9ca3af;
+    --border: #4b5563;
+    --radius: 0.75rem;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
+    --transition: 0.3s ease-in-out;
+}
+
 /* Styling the body */
 body {
     display: flex;
@@ -5,7 +20,8 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: "Roboto", sans-serif;
-    background-color: #1f1f1f;
+    background: linear-gradient(to bottom, #1f1f1f, #374151); /* Subtle gradient */
+    color: var(--text);
 }
 
 /* Main content area takes available space */
@@ -19,17 +35,17 @@ body {
 /* Container styles remain the same */
 .container {
     text-align: center;
-    background-color: #4d4d4d;
-    padding: 20px;
-    color: mintcream;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    border-radius: 12px; /* Slightly more rounded corners */
-    margin: 3vh;
-    margin-bottom: 6vh;
-    overflow: visible;
+    background-color: var(--surface);
+    padding: 2rem;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    margin: 3vh auto;
+    border: 1px solid var(--border); /* Subtle border */
+    overflow: hidden;
     position: relative;
-    width: 100%;
-    max-width: 1000px;
+    width: 90%;
+    max-width: 800px;
     min-width: 300px;
 }
 
@@ -85,34 +101,25 @@ body {
 }
 
 /* Textarea styling */
-textarea {
-    width: calc(100% - 20px);
-    background-color: #a6a6a6;
-    color: #121212;
-    height: 20vh;
-    max-height: 30vh;
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
-    resize: none;
-    border: none;
-    outline: none;
-    border-radius: 8px; /* Rounded corners */
-}
-
-/* Text input styling */
+textarea,
 input[type="text"],
 input[type="password"] {
     width: calc(100% - 20px);
-    background-color: #a6a6a6;
-    color: #121212;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-    max-height: 40px;
+    background-color: #4b5563; /* Darker input background */
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
     border: none;
     outline: none;
-    border-radius: 8px; /* Rounded corners */
+    border-radius: var(--radius);
+    transition: box-shadow var(--transition);
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Highlight on focus */
 }
 
 /* Centered buttons container */
@@ -130,27 +137,28 @@ button,
 .return-button {
     position: relative;
     border: none;
-    border-radius: 12px; /* Rounded corners */
-    background-color: #b80000;
+    border-radius: var(--radius);
+    background-color: var(--primary);
     color: #ffffff;
     text-align: center;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    font-weight: 500; /* Changed font weight */
+    transition: background-color var(--transition), transform 0.2s ease;
     width: 120px;
     height: 40px;
-    font-size: 16px;
+    font-size: 1rem;
     margin: 0;
     padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 button:hover,
 .copy-button:hover,
 .copy-link-button:hover,
 .return-button:hover {
-    background-color: #960000;
-    transform: translateY(-1px); /* Slight lift on hover */
+    background-color: var(--primary-hover);
+    transform: translateY(-2px); /* More pronounced lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
 }
 
 /* Styled dropdown */
@@ -158,7 +166,7 @@ button:hover,
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-color: #b80000;
+    background-color: var(--primary);
     color: white;
     padding: 10px;
     margin: 0;
@@ -183,7 +191,7 @@ button:hover,
 /* Error popup styling */
 .popup,
 .error {
-    background-color: #b80000;
+    background-color: var(--danger);
     color: white;
     padding: 10px;
     margin-top: 10px;
