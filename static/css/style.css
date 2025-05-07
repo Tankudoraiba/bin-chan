@@ -36,15 +36,16 @@ body {
 
 /* Footer styling */
 .footer {
-    background-color: #4d4d4d;
+    background-color: #636363; /* Match the darker end of the container gradient */
     color: mintcream;
     text-align: center;
     padding: 5px;
     font-size: 14px;
-    width: 200px;
+    width: 100%; /* Expand to full width */
     align-self: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-bottom-left-radius: 12px; /* Match container's border-radius */
+    border-bottom-right-radius: 12px; /* Match container's border-radius */
+    margin-top: 10px; /* Add some space between content and footer */
 }
 
 .footer a {
@@ -139,7 +140,7 @@ button,
     text-align: center;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
     width: 120px;
     height: 40px;
     font-size: 16px;
@@ -154,7 +155,6 @@ button:hover,
 .copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
-    transform: translateY(-2px); /* More lift on hover */
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
     background: #960000; /* Solid color on hover */
 }
@@ -174,7 +174,7 @@ button:hover,
     font-size: 16px;
     font-weight: bold;
     text-align: center;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
     height: 40px;
     width: 120px;
     outline: none;
@@ -184,7 +184,6 @@ button:hover,
 
 .styled-dropdown:hover {
     background-color: #960000;
-    transform: translateY(-2px); /* More lift on hover */
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
     background: #960000; /* Solid color on hover */
 }
@@ -229,13 +228,12 @@ button:hover,
 .countdown-timer {
     color: mintcream;
     font-size: smaller;
-    background: #4d4d4d;
+    background: rgba(0, 0, 0, 0.3); /* Semi-transparent background */
     padding: 2px 5px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-radius: 8px; /* Rounded corners */
     position: absolute;
     text-wrap-mode: nowrap;
-    bottom: -10px;
+    bottom: -15px; /* Adjust position */
     left: 50%;
     transform: translateX(-50%);
 }
