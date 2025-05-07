@@ -22,8 +22,8 @@ body {
     background-color: #4d4d4d;
     padding: 20px;
     color: mintcream;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 12px; /* Slightly more rounded corners */
     margin: 3vh;
     margin-bottom: 6vh;
     overflow: visible;
@@ -97,6 +97,7 @@ textarea {
     resize: none;
     border: none;
     outline: none;
+    border-radius: 8px; /* Rounded corners */
 }
 
 /* Text input styling */
@@ -111,6 +112,7 @@ input[type="password"] {
     max-height: 40px;
     border: none;
     outline: none;
+    border-radius: 8px; /* Rounded corners */
 }
 
 /* Centered buttons container */
@@ -122,25 +124,33 @@ input[type="password"] {
 }
 
 /* Submit button styling */
-button {
+button,
+.copy-button,
+.copy-link-button,
+.return-button {
     position: relative;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px; /* Rounded corners */
     background-color: #b80000;
     color: #ffffff;
     text-align: center;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
     width: 120px;
     height: 40px;
     font-size: 16px;
     margin: 0;
     padding: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-button:hover {
+button:hover,
+.copy-button:hover,
+.copy-link-button:hover,
+.return-button:hover {
     background-color: #960000;
+    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Styled dropdown */
@@ -153,28 +163,21 @@ button:hover {
     padding: 10px;
     margin: 0;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px; /* Rounded corners */
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
     text-align: center;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
     height: 40px;
     width: 120px;
     outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .styled-dropdown:hover {
     background-color: #960000;
-}
-
-/* Dropdown arrow */
-.styled-dropdown::after {
-    content: '▼';
-    position: absolute;
-    right: 10px;
-    top: calc(50% - 10px);
-    pointer-events: none;
+    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Error popup styling */
@@ -184,7 +187,7 @@ button:hover {
     color: white;
     padding: 10px;
     margin-top: 10px;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded corners */
     position: fixed;
     top: 20px;
     left: 50%;
@@ -194,6 +197,7 @@ button:hover {
     width: 80%;
     max-width: 400px;
     text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
 }
 
 /* Text box styling */
@@ -209,6 +213,8 @@ button:hover {
     font-size: 16px;
     overflow-y: auto;
     max-height: 50vh;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .countdown-timer {
@@ -231,23 +237,25 @@ button:hover {
 .return-button {
     position: relative;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px; /* Rounded corners */
     background-color: #b80000;
     color: #ffffff;
     text-align: center;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
     width: 120px;
     height: 40px;
     /* Set fixed height */
     font-size: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .copy-button:hover,
 .copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
+    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 .green-bg {
