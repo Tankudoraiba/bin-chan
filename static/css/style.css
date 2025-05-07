@@ -22,7 +22,7 @@ body {
     background-color: #4d4d4d;
     padding: 20px;
     color: mintcream;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     border-radius: 12px; /* Slightly more rounded corners */
     margin: 3vh;
     margin-bottom: 6vh;
@@ -31,21 +31,19 @@ body {
     width: 100%;
     max-width: 1000px;
     min-width: 300px;
-    background: linear-gradient(145deg, #4d4d4d, #636363); /* Subtle gradient */
 }
 
 /* Footer styling */
 .footer {
-    background-color: #636363; /* Match the darker end of the container gradient */
+    background-color: #4d4d4d;
     color: mintcream;
     text-align: center;
     padding: 5px;
     font-size: 14px;
-    width: 100%; /* Expand to full width */
+    width: 200px;
     align-self: center;
-    border-bottom-left-radius: 12px; /* Match container's border-radius */
-    border-bottom-right-radius: 12px; /* Match container's border-radius */
-    margin-top: 10px; /* Add some space between content and footer */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .footer a {
@@ -100,7 +98,6 @@ textarea {
     border: none;
     outline: none;
     border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 /* Text input styling */
@@ -116,7 +113,6 @@ input[type="password"] {
     border: none;
     outline: none;
     border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 /* Centered buttons container */
@@ -140,14 +136,13 @@ button,
     text-align: center;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
     width: 120px;
     height: 40px;
     font-size: 16px;
     margin: 0;
     padding: 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    background: linear-gradient(145deg, #b80000, #d10000); /* Subtle gradient */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 button:hover,
@@ -155,8 +150,7 @@ button:hover,
 .copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-    background: #960000; /* Solid color on hover */
+    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Styled dropdown */
@@ -174,18 +168,16 @@ button:hover,
     font-size: 16px;
     font-weight: bold;
     text-align: center;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
     height: 40px;
     width: 120px;
     outline: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    background: linear-gradient(145deg, #b80000, #d10000); /* Subtle gradient */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .styled-dropdown:hover {
     background-color: #960000;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-    background: #960000; /* Solid color on hover */
+    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Error popup styling */
@@ -205,7 +197,7 @@ button:hover,
     width: 80%;
     max-width: 400px;
     text-align: center;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4); /* More pronounced shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
 }
 
 /* Text box styling */
@@ -222,18 +214,19 @@ button:hover,
     overflow-y: auto;
     max-height: 50vh;
     border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .countdown-timer {
     color: mintcream;
     font-size: smaller;
-    background: rgba(0, 0, 0, 0.3); /* Semi-transparent background */
+    background: #4d4d4d;
     padding: 2px 5px;
-    border-radius: 8px; /* Rounded corners */
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     position: absolute;
     text-wrap-mode: nowrap;
-    bottom: -15px; /* Adjust position */
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
 }
