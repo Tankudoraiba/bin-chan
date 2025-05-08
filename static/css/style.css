@@ -150,7 +150,6 @@ button:hover,
 .copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
-    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Styled dropdown */
@@ -177,7 +176,6 @@ button:hover,
 
 .styled-dropdown:hover {
     background-color: #960000;
-    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 /* Error popup styling */
@@ -255,7 +253,6 @@ button:hover,
 .copy-link-button:hover,
 .return-button:hover {
     background-color: #960000;
-    transform: translateY(-1px); /* Slight lift on hover */
 }
 
 .green-bg {
