@@ -60,13 +60,25 @@
                     <input type="text" name="url_name" placeholder="Custom URL (optional)">
                     <input type="password" name="password" placeholder="Password (optional)">
                     <div class="buttons">
-                        <select name="expiry_option" required class="styled-dropdown">
+                        <!-- Keep the real select hidden for form submission -->
+                        <select name="expiry_option" required class="styled-dropdown hidden-styled-dropdown" id="realExpirySelect">
                             <option value="10m">10 Minutes</option>
                             <option value="1h">1 Hour</option>
                             <option value="3h">3 Hours</option>
                             <option value="24h">24 Hours</option>
                             <option value="7d">7 Days</option>
                         </select>
+                        <!-- Custom rounded dropdown visual -->
+                        <div class="custom-dropdown" id="customExpiry" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+                            <div class="selected" id="customExpirySelected">10 Minutes</div>
+                            <div class="options" role="listbox" id="customExpiryOptions">
+                                <div class="option" role="option" data-value="10m">10 Minutes</div>
+                                <div class="option" role="option" data-value="1h">1 Hour</div>
+                                <div class="option" role="option" data-value="3h">3 Hours</div>
+                                <div class="option" role="option" data-value="24h">24 Hours</div>
+                                <div class="option" role="option" data-value="7d">7 Days</div>
+                            </div>
+                        </div>
                         <button type="submit">Share Text</button>
                     </div>
                 </form>
@@ -81,6 +93,64 @@
 
         <script>
             $(document).ready(function () {
+                // Custom dropdown logic to show a rounded options list and keep original select in sync
+                const $realSelect = $('#realExpirySelect');
+                const $custom = $('#customExpiry');
+                const $selected = $('#customExpirySelected');
+                const $options = $('#customExpiryOptions');
+
+                function openCustom() {
+                    $custom.addClass('open');
+                    $custom.attr('aria-expanded', 'true');
+                }
+                function closeCustom() {
+                    $custom.removeClass('open');
+                    $custom.attr('aria-expanded', 'false');
+                }
+
+                $custom.on('click', function (e) {
+                    e.stopPropagation();
+                    if ($custom.hasClass('open')) closeCustom(); else openCustom();
+                });
+
+                // Close dropdown after a short delay when mouse leaves so the user can move into the options
+                let _closeDropdownTimeout = null;
+                $custom.on('mouseleave', function () {
+                    _closeDropdownTimeout = setTimeout(function () {
+                        closeCustom();
+                        _closeDropdownTimeout = null;
+                    }, 200); // 200ms grace period
+                });
+                // Cancel closing if mouse re-enters quickly
+                $custom.on('mouseenter', function () {
+                    if (_closeDropdownTimeout) {
+                        clearTimeout(_closeDropdownTimeout);
+                        _closeDropdownTimeout = null;
+                    }
+                });
+
+                $options.on('click', '.option', function (e) {
+                    const val = $(this).data('value');
+                    const text = $(this).text();
+                    $selected.text(text);
+                    $realSelect.val(val).trigger('change');
+                    closeCustom();
+                });
+
+                // Close when clicking outside
+                $(document).on('click', function () { closeCustom(); });
+
+                // Keyboard accessibility
+                $custom.on('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $custom.click(); }
+                    if (e.key === 'Escape') closeCustom();
+                });
+
+                // Initialize with select's current value
+                const initVal = $realSelect.val();
+                const initText = $realSelect.find('option:selected').text();
+                $selected.text(initText);
+
                 $('#textForm').on('submit', function (event) {
                     event.preventDefault();
 

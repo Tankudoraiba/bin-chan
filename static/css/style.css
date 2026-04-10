@@ -174,8 +174,80 @@ button:hover,
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-.styled-dropdown:hover {
+.styled-dropdown:hover,
+.custom-dropdown:hover,
+.custom-dropdown .selected:hover {
     background-color: #960000;
+}
+
+/* Custom dropdown styles for a rounded options list that replaces the native dropdown visually */
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height: 40px;
+    border-radius: 12px;
+    background: #b80000;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: visible;
+}
+.custom-dropdown .selected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 10px;
+    border-radius: 12px;
+    text-align: center;
+}
+.custom-dropdown .options {
+    position: absolute;
+    top: 100%; /* align directly below the trigger to avoid hover gap */
+    left: 0;
+    width: 100%;
+    background: #b80000;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    z-index: 2000;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 6px 0;
+    display: none;
+}
+.custom-dropdown.open .options {
+    display: block;
+}
+/* Also show options while hovering; this makes the options disappear when the mouse leaves */
+.custom-dropdown:hover .options {
+    display: block;
+}
+.custom-dropdown .option {
+    padding: 8px 10px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 8px;
+    margin: 4px 8px;
+    white-space: nowrap;
+}
+.custom-dropdown .option:hover {
+    background: rgba(255,255,255,0.06);
+}
+
+/* Hide the native select visually but keep it in the DOM for form submission */
+.hidden-styled-dropdown {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
 }
 
 /* Error popup styling */
