@@ -5,6 +5,7 @@ FROM python:3.13-alpine
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 ENV FLASK_DEBUG=0
+ENV TZ=UTC
 
 # Set the working directory
 WORKDIR /app
@@ -13,7 +14,9 @@ WORKDIR /app
 COPY requirements.txt ./
 
 # Install dependencies and utilities (vim and curl)
-RUN apk update && apk add --no-cache vim curl
+RUN apk update && apk add --no-cache vim curl tzdata \
+    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" > /etc/timezone
 
 # Install Python dependencies and gunicorn
 RUN pip install --no-cache-dir -r requirements.txt gunicorn
